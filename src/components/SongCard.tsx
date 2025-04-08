@@ -20,11 +20,11 @@ const SongCard: React.FC<SongCardProps> = ({ song, isActive, swipeDirection }) =
 
   return (
     <Card 
-      className={`song-card w-full aspect-[3/4] absolute ${cardClasses()} ${isActive ? "z-10" : "z-0"}`} 
+      className={`song-card w-full aspect-[3/5] rounded-3xl overflow-hidden absolute ${cardClasses()} ${isActive ? "z-10" : "z-0"} bg-white dark:bg-gray-900`}
     >
       <div className="relative h-full w-full flex flex-col">
-        {/* Album cover */}
-        <div className="relative h-3/5 overflow-hidden">
+        {/* Album cover/artist image - taking up most of the card */}
+        <div className="relative h-4/5 overflow-hidden">
           {song.coverImage ? (
             <img 
               src={song.coverImage} 
@@ -38,16 +38,17 @@ const SongCard: React.FC<SongCardProps> = ({ song, isActive, swipeDirection }) =
           )}
         </div>
         
-        {/* Song info */}
-        <div className="p-5 flex flex-col flex-grow bg-gradient-to-b from-music-accent to-white dark:from-music-dark dark:to-gray-900">
-          <h2 className="text-2xl font-bold text-music-primary line-clamp-1">{song.title}</h2>
-          <p className="text-lg text-gray-700 dark:text-gray-300 mb-2">{song.artist}</p>
-          
-          <div className="mt-auto flex items-center justify-between">
-            <Badge variant="outline" className="bg-music-accent/50 text-music-primary border-music-primary">
-              {song.genre}
-            </Badge>
-            <span className="text-sm text-gray-500">{song.releaseYear}</span>
+        {/* Song info - at the bottom of the card */}
+        <div className="p-5 flex flex-col bg-white dark:bg-gray-900">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white line-clamp-1">{song.artist}</h2>
+              <div className="flex gap-2 mt-2">
+                <Badge variant="outline" className="bg-music-accent/20 text-gray-700 border-gray-300">
+                  {song.genre}
+                </Badge>
+              </div>
+            </div>
           </div>
         </div>
       </div>
