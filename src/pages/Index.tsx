@@ -72,13 +72,15 @@ const Index = () => {
       <div className="h-full flex flex-col px-4 pt-10 pb-20">
         <header className="mb-6">
           <div className="flex items-center justify-center space-x-2">
-            <Music size={28} className="text-music-primary" />
+            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-music-primary to-music-secondary flex items-center justify-center">
+              <span className="text-lg font-bold text-white">T</span>
+            </div>
             <h1 className="text-2xl font-bold bg-gradient-to-r from-music-primary to-music-secondary bg-clip-text text-transparent">
-              SongMatch
+              Thammy
             </h1>
           </div>
           <p className="text-center text-gray-500 text-sm mt-1">
-            Find your melody match
+            Where music breaks through
           </p>
         </header>
         

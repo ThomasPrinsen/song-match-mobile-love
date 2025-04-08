@@ -1,4 +1,6 @@
+
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import MobileLayout from "@/components/MobileLayout";
 import NavBar from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
@@ -6,6 +8,7 @@ import { ListMusic, Music, Settings, LogOut, Heart } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 const ProfilePage = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [userName, setUserName] = useState<string>("Music Lover");
 
@@ -15,6 +18,14 @@ const ProfilePage = () => {
       title: "Matches cleared",
       description: "All your song matches have been cleared",
     });
+  };
+
+  const handleLogout = () => {
+    toast({
+      title: "Signed out",
+      description: "You have been signed out successfully",
+    });
+    navigate("/login");
   };
 
   const genres = ["Pop", "Rock", "Electronic", "Hip Hop", "R&B", "Indie", "Jazz", "Classical"];
@@ -88,10 +99,7 @@ const ProfilePage = () => {
             <Button 
               variant="outline" 
               className="w-full flex justify-start text-red-500"
-              onClick={() => toast({
-                title: "Sign Out",
-                description: "You would be signed out in a full app",
-              })}
+              onClick={handleLogout}
             >
               <LogOut size={18} className="mr-2" />
               Sign Out
