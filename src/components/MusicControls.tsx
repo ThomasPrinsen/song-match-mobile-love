@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Heart, X, Play, Pause } from "lucide-react";
+import { Star, X, Play, Pause } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import type { Song } from "@/data/songs";
@@ -8,7 +8,7 @@ import type { Song } from "@/data/songs";
 interface MusicControlsProps {
   isPlaying: boolean;
   currentSong: Song | null;
-  onLike: () => void;
+  onRate: () => void;
   onSkip: () => void;
   onTogglePlay: () => void;
 }
@@ -16,20 +16,14 @@ interface MusicControlsProps {
 const MusicControls: React.FC<MusicControlsProps> = ({
   isPlaying,
   currentSong,
-  onLike,
+  onRate,
   onSkip,
   onTogglePlay,
 }) => {
   const { toast } = useToast();
 
-  const handleLike = () => {
-    onLike();
-    if (currentSong) {
-      toast({
-        title: "Matched with song!",
-        description: `You matched with ${currentSong.title} by ${currentSong.artist}`,
-      });
-    }
+  const handleRate = () => {
+    onRate();
   };
 
   return (
@@ -57,12 +51,12 @@ const MusicControls: React.FC<MusicControlsProps> = ({
       </Button>
       
       <Button
-        onClick={handleLike}
+        onClick={handleRate}
         size="lg"
         variant="outline"
         className="music-control rounded-full h-14 w-14 border-2 border-music-secondary"
       >
-        <Heart className="h-8 w-8 text-music-secondary" />
+        <Star className="h-8 w-8 text-music-secondary" />
       </Button>
     </div>
   );

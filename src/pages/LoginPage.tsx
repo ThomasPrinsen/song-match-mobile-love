@@ -37,7 +37,7 @@ const LoginPage = () => {
     
     // In a real app, we would handle authentication here
     localStorage.setItem('userType', userType);
-    navigate("/");
+    navigate("/discover");
   };
 
   return (

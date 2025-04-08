@@ -4,6 +4,7 @@ import SongCard from "@/components/SongCard";
 import MusicControls from "@/components/MusicControls";
 import MobileLayout from "@/components/MobileLayout";
 import NavBar from "@/components/NavBar";
+import RatingDialog from "@/components/RatingDialog";
 import { songs, Song } from "@/data/songs";
 import { Music } from "lucide-react";
 
@@ -12,15 +13,21 @@ const Index = () => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [matchedSongs, setMatchedSongs] = useState<Song[]>([]);
   const [swipeDirection, setSwipeDirection] = useState<"none" | "left" | "right">("none");
+  const [showRatingDialog, setShowRatingDialog] = useState<boolean>(false);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   
-  const currentSong = songs[currentSongIndex];
+  const filteredSongs = selectedGenres.length > 0 
+    ? songs.filter(song => selectedGenres.includes(song.genre))
+    : songs;
+  
+  const currentSong = filteredSongs.length > 0 ? filteredSongs[currentSongIndex % filteredSongs.length] : null;
   
   const handleSkip = () => {
     setSwipeDirection("left");
     
     // Small delay to allow animation to complete
     setTimeout(() => {
-      if (currentSongIndex < songs.length - 1) {
+      if (currentSongIndex < filteredSongs.length - 1) {
         setCurrentSongIndex(currentSongIndex + 1);
       } else {
         // Loop back to the first song when we reach the end
@@ -31,23 +38,30 @@ const Index = () => {
     }, 300);
   };
   
-  const handleLike = () => {
-    setSwipeDirection("right");
-    
-    // Add to matches
-    setMatchedSongs([...matchedSongs, currentSong]);
-    
-    // Small delay to allow animation to complete
-    setTimeout(() => {
-      if (currentSongIndex < songs.length - 1) {
-        setCurrentSongIndex(currentSongIndex + 1);
-      } else {
-        // Loop back to the first song when we reach the end
-        setCurrentSongIndex(0);
+  const handleRate = () => {
+    setShowRatingDialog(true);
+  };
+  
+  const handleRatingSubmit = (rating: number) => {
+    if (currentSong) {
+      const ratedSong = { ...currentSong, userRating: rating };
+      
+      if (rating >= 3) {
+        // Add to matches if rating is 3 stars or higher
+        setMatchedSongs(prev => [...prev, ratedSong]);
       }
-      setSwipeDirection("none");
-      setIsPlaying(false);
-    }, 300);
+      
+      // Continue to next song
+      setTimeout(() => {
+        if (currentSongIndex < filteredSongs.length - 1) {
+          setCurrentSongIndex(currentSongIndex + 1);
+        } else {
+          setCurrentSongIndex(0);
+        }
+        setSwipeDirection("none");
+        setIsPlaying(false);
+      }, 300);
+    }
   };
   
   const handleTogglePlay = () => {
@@ -64,6 +78,14 @@ const Index = () => {
     const savedMatches = localStorage.getItem("matchedSongs");
     if (savedMatches) {
       setMatchedSongs(JSON.parse(savedMatches));
+    }
+  }, []);
+  
+  // Load selected genres from localStorage
+  useEffect(() => {
+    const savedGenres = localStorage.getItem("selectedGenres");
+    if (savedGenres) {
+      setSelectedGenres(JSON.parse(savedGenres));
     }
   }, []);
   
@@ -97,9 +119,9 @@ const Index = () => {
             )}
             
             {/* Next song card (just for visual effect) */}
-            {songs[currentSongIndex + 1 < songs.length ? currentSongIndex + 1 : 0] && (
+            {filteredSongs.length > 1 && (
               <SongCard 
-                song={songs[currentSongIndex + 1 < songs.length ? currentSongIndex + 1 : 0]}
+                song={filteredSongs[(currentSongIndex + 1) % filteredSongs.length]}
                 isActive={false}
                 swipeDirection="none"
               />
@@ -110,11 +132,18 @@ const Index = () => {
         <MusicControls 
           isPlaying={isPlaying}
           currentSong={currentSong}
-          onLike={handleLike}
+          onRate={handleRate}
           onSkip={handleSkip}
           onTogglePlay={handleTogglePlay}
         />
       </div>
+      
+      <RatingDialog 
+        isOpen={showRatingDialog}
+        onClose={() => setShowRatingDialog(false)}
+        onRate={handleRatingSubmit}
+        currentSong={currentSong}
+      />
       
       <NavBar />
     </MobileLayout>

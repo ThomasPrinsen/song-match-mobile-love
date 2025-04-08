@@ -1,9 +1,11 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import MobileLayout from "@/components/MobileLayout";
 import NavBar from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ListMusic, Music, Settings, LogOut, Heart } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -11,6 +13,13 @@ const ProfilePage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [userName, setUserName] = useState<string>("Music Lover");
+  
+  const allGenres = [
+    "Pop", "Rock", "Electronic", "Hip Hop", "R&B", "Indie", "Jazz", "Classical",
+    "Country", "Folk", "Metal", "Punk", "Blues", "Reggae", "Soul", "Funk"
+  ];
+  
+  const [selectedGenres, setSelectedGenres] = useState<string[]>(["Pop", "Rock", "Electronic", "Hip Hop", "R&B"]);
 
   const handleClearMatches = () => {
     localStorage.removeItem("matchedSongs");
@@ -28,7 +37,26 @@ const ProfilePage = () => {
     navigate("/login");
   };
 
-  const genres = ["Pop", "Rock", "Electronic", "Hip Hop", "R&B", "Indie", "Jazz", "Classical"];
+  const toggleGenre = (genre: string) => {
+    if (selectedGenres.includes(genre)) {
+      setSelectedGenres(selectedGenres.filter(g => g !== genre));
+    } else {
+      setSelectedGenres([...selectedGenres, genre]);
+    }
+  };
+  
+  // Save selected genres to localStorage
+  useEffect(() => {
+    localStorage.setItem("selectedGenres", JSON.stringify(selectedGenres));
+  }, [selectedGenres]);
+  
+  // Load selected genres from localStorage on initial render
+  useEffect(() => {
+    const savedGenres = localStorage.getItem("selectedGenres");
+    if (savedGenres) {
+      setSelectedGenres(JSON.parse(savedGenres));
+    }
+  }, []);
 
   return (
     <MobileLayout>
@@ -50,14 +78,21 @@ const ProfilePage = () => {
           </div>
 
           <div className="mb-8">
-            <h3 className="text-lg font-semibold mb-3">Favorite Genres</h3>
-            <div className="flex flex-wrap gap-2">
-              {genres.map((genre) => (
-                <div 
-                  key={genre} 
-                  className="px-3 py-1 bg-music-accent/30 text-music-primary rounded-full text-sm"
-                >
-                  {genre}
+            <h3 className="text-lg font-semibold mb-3">Genres You Want to See</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {allGenres.map((genre) => (
+                <div key={genre} className="flex items-center space-x-2">
+                  <Checkbox 
+                    id={`genre-${genre}`} 
+                    checked={selectedGenres.includes(genre)} 
+                    onCheckedChange={() => toggleGenre(genre)}
+                  />
+                  <label 
+                    htmlFor={`genre-${genre}`} 
+                    className="text-sm cursor-pointer"
+                  >
+                    {genre}
+                  </label>
                 </div>
               ))}
             </div>
