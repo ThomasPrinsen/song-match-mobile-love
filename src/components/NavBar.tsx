@@ -24,13 +24,13 @@ const NavBar: React.FC = () => {
         </Link>
         
         <Link 
-          to="/matches" 
+          to="/favourites" 
           className={`flex flex-col items-center py-2 px-4 ${
-            isActive("/matches") ? "text-music-primary" : "text-gray-500"
+            isActive("/favourites") ? "text-music-primary" : "text-gray-500"
           }`}
         >
           <Heart size={24} />
-          <span className="text-xs mt-1">Matches</span>
+          <span className="text-xs mt-1">Favourites</span>
         </Link>
         
         <Link 

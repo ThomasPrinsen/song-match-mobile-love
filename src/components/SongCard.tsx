@@ -2,16 +2,24 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Music } from "lucide-react";
+import { Music, Heart } from "lucide-react";
 import type { Song } from "@/data/songs";
 
 interface SongCardProps {
   song: Song;
   isActive: boolean;
   swipeDirection: "none" | "left" | "right";
+  onFavorite: () => void;
+  isFavorite: boolean;
 }
 
-const SongCard: React.FC<SongCardProps> = ({ song, isActive, swipeDirection }) => {
+const SongCard: React.FC<SongCardProps> = ({ 
+  song, 
+  isActive, 
+  swipeDirection,
+  onFavorite,
+  isFavorite 
+}) => {
   const cardClasses = () => {
     if (swipeDirection === "right") return "swipe-right";
     if (swipeDirection === "left") return "swipe-left";
@@ -36,6 +44,20 @@ const SongCard: React.FC<SongCardProps> = ({ song, isActive, swipeDirection }) =
               <Music size={80} className="text-music-primary opacity-50" />
             </div>
           )}
+          
+          {/* Favorite button */}
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              onFavorite();
+            }}
+            className="absolute top-4 right-4 p-2 bg-white/70 dark:bg-gray-800/70 rounded-full shadow-md"
+          >
+            <Heart 
+              size={20} 
+              className={isFavorite ? "fill-music-primary text-music-primary" : "text-gray-500"} 
+            />
+          </button>
         </div>
         
         {/* Song info - at the bottom of the card */}

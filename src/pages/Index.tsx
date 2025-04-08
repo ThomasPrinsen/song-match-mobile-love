@@ -7,26 +7,40 @@ import NavBar from "@/components/NavBar";
 import RatingDialog from "@/components/RatingDialog";
 import { songs, Song } from "@/data/songs";
 import { Music } from "lucide-react";
+import { useToast } from "@/components/ui/use-toast";
 
 const Index = () => {
   const [currentSongIndex, setCurrentSongIndex] = useState<number>(0);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [matchedSongs, setMatchedSongs] = useState<Song[]>([]);
+  const [favoriteSongs, setFavoriteSongs] = useState<Song[]>([]);
+  const [ratedSongs, setRatedSongs] = useState<number[]>([]);
   const [showRatingDialog, setShowRatingDialog] = useState<boolean>(false);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const { toast } = useToast();
   
-  const filteredSongs = selectedGenres.length > 0 
-    ? songs.filter(song => selectedGenres.includes(song.genre))
-    : songs;
+  // Filter songs by selected genres and exclude rated songs
+  const filteredSongs = songs
+    .filter(song => selectedGenres.length === 0 || selectedGenres.includes(song.genre))
+    .filter(song => !ratedSongs.includes(song.id));
   
   const currentSong = filteredSongs.length > 0 ? filteredSongs[currentSongIndex % filteredSongs.length] : null;
   
   const handleNextSong = () => {
     if (currentSongIndex < filteredSongs.length - 1) {
       setCurrentSongIndex(currentSongIndex + 1);
-    } else {
+    } else if (filteredSongs.length > 1) {
       // Loop back to the first song when we reach the end
       setCurrentSongIndex(0);
+    }
+    setIsPlaying(false);
+  };
+  
+  const handlePreviousSong = () => {
+    if (currentSongIndex > 0) {
+      setCurrentSongIndex(currentSongIndex - 1);
+    } else if (filteredSongs.length > 1) {
+      // Loop to the last song if at the beginning
+      setCurrentSongIndex(filteredSongs.length - 1);
     }
     setIsPlaying(false);
   };
@@ -37,34 +51,58 @@ const Index = () => {
   
   const handleRatingSubmit = (rating: number) => {
     if (currentSong) {
-      const ratedSong = { ...currentSong, userRating: rating };
+      // Add to rated songs
+      setRatedSongs(prev => [...prev, currentSong.id]);
       
-      if (rating >= 3) {
-        // Add to matches if rating is 3 stars or higher
-        setMatchedSongs(prev => [...prev, ratedSong]);
+      // Continue to next song if available
+      if (filteredSongs.length > 1) {
+        handleNextSong();
+      } else {
+        // Reset current index if this was the last song
+        setCurrentSongIndex(0);
       }
-      
-      // Continue to next song
-      handleNextSong();
       setShowRatingDialog(false);
     }
   };
   
-  // Save matched songs to localStorage
-  useEffect(() => {
-    localStorage.setItem("matchedSongs", JSON.stringify(matchedSongs));
-  }, [matchedSongs]);
-  
-  // Load matched songs from localStorage on initial render
-  useEffect(() => {
-    const savedMatches = localStorage.getItem("matchedSongs");
-    if (savedMatches) {
-      setMatchedSongs(JSON.parse(savedMatches));
+  const handleToggleFavorite = () => {
+    if (!currentSong) return;
+    
+    const isFavorite = favoriteSongs.some(song => song.id === currentSong.id);
+    
+    if (isFavorite) {
+      setFavoriteSongs(favoriteSongs.filter(song => song.id !== currentSong.id));
+      toast({
+        title: "Removed from favorites",
+        description: `"${currentSong.title}" has been removed from your favorites`,
+      });
+    } else {
+      setFavoriteSongs([...favoriteSongs, currentSong]);
+      toast({
+        title: "Added to favorites",
+        description: `"${currentSong.title}" has been added to your favorites`,
+      });
     }
-  }, []);
+  };
   
-  // Load selected genres from localStorage
+  // Save data to localStorage
   useEffect(() => {
+    localStorage.setItem("favoriteSongs", JSON.stringify(favoriteSongs));
+    localStorage.setItem("ratedSongs", JSON.stringify(ratedSongs));
+  }, [favoriteSongs, ratedSongs]);
+  
+  // Load data from localStorage on initial render
+  useEffect(() => {
+    const savedFavorites = localStorage.getItem("favoriteSongs");
+    if (savedFavorites) {
+      setFavoriteSongs(JSON.parse(savedFavorites));
+    }
+    
+    const savedRated = localStorage.getItem("ratedSongs");
+    if (savedRated) {
+      setRatedSongs(JSON.parse(savedRated));
+    }
+    
     const savedGenres = localStorage.getItem("selectedGenres");
     if (savedGenres) {
       setSelectedGenres(JSON.parse(savedGenres));
@@ -73,6 +111,7 @@ const Index = () => {
 
   // Limit the number of visible songs to 5 maximum
   const visibleSongs = filteredSongs.slice(0, 5);
+  const isFavorite = currentSong ? favoriteSongs.some(song => song.id === currentSong.id) : false;
   
   return (
     <MobileLayout>
@@ -100,7 +139,19 @@ const Index = () => {
                 song={currentSong}
                 isActive={true}
                 swipeDirection="none"
+                onFavorite={handleToggleFavorite}
+                isFavorite={isFavorite}
               />
+            )}
+            
+            {filteredSongs.length === 0 && (
+              <div className="flex flex-col items-center justify-center h-full text-center">
+                <Music size={64} className="text-gray-300 mb-4" />
+                <h3 className="text-xl font-medium text-white mb-2">No more songs</h3>
+                <p className="text-gray-300 max-w-xs">
+                  You've rated all available songs in this genre. Try selecting different genres in your profile.
+                </p>
+              </div>
             )}
           </div>
         </div>
@@ -123,6 +174,10 @@ const Index = () => {
           isPlaying={isPlaying}
           currentSong={currentSong}
           onRate={handleRate}
+          onPrevious={handlePreviousSong}
+          onNext={handleNextSong}
+          canNavigatePrevious={filteredSongs.length > 1}
+          canNavigateNext={filteredSongs.length > 1}
         />
       </div>
       
