@@ -1,9 +1,8 @@
-
 import React, { useState } from "react";
 import MobileLayout from "@/components/MobileLayout";
 import NavBar from "@/components/NavBar";
 import { Button } from "@/components/ui/button";
-import { ListMusic, Music, Settings, LogOut } from "lucide-react";
+import { ListMusic, Music, Settings, LogOut, Heart } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 const ProfilePage = () => {
@@ -31,7 +30,6 @@ const ProfilePage = () => {
         </header>
 
         <div className="flex-grow overflow-y-auto">
-          {/* Profile info */}
           <div className="flex flex-col items-center mb-8">
             <div className="w-24 h-24 rounded-full bg-gradient-to-r from-music-primary to-music-secondary flex items-center justify-center mb-4">
               <Music size={40} className="text-white" />
@@ -40,7 +38,6 @@ const ProfilePage = () => {
             <p className="text-gray-500 text-sm">Music enthusiast</p>
           </div>
 
-          {/* Music preferences */}
           <div className="mb-8">
             <h3 className="text-lg font-semibold mb-3">Favorite Genres</h3>
             <div className="flex flex-wrap gap-2">
@@ -55,7 +52,6 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* Stats */}
           <div className="grid grid-cols-2 gap-4 mb-8">
             <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 text-center">
               <p className="text-2xl font-bold text-music-primary">12</p>
@@ -67,7 +63,6 @@ const ProfilePage = () => {
             </div>
           </div>
 
-          {/* Actions */}
           <div className="space-y-3">
             <Button 
               variant="outline" 
