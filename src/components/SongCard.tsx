@@ -3,6 +3,7 @@ import React from "react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Music, Heart } from "lucide-react";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import type { Song } from "@/data/songs";
 
 interface SongCardProps {
@@ -11,6 +12,8 @@ interface SongCardProps {
   swipeDirection: "none" | "left" | "right";
   onFavorite: () => void;
   isFavorite: boolean;
+  zIndex?: number;
+  position?: number;
 }
 
 const SongCard: React.FC<SongCardProps> = ({ 
@@ -18,7 +21,9 @@ const SongCard: React.FC<SongCardProps> = ({
   isActive, 
   swipeDirection,
   onFavorite,
-  isFavorite 
+  isFavorite,
+  zIndex = 10,
+  position = 0
 }) => {
   const cardClasses = () => {
     if (swipeDirection === "right") return "swipe-right";
@@ -26,13 +31,33 @@ const SongCard: React.FC<SongCardProps> = ({
     return "";
   };
 
+  // Calculate position transformations for the stack effect
+  const getTransform = () => {
+    if (!isActive && position !== undefined) {
+      // If not the active card, apply offset based on position
+      if (position > 0) {
+        // Cards to the right
+        return `translateX(${Math.min(position * 20, 60)}px) scale(${Math.max(1 - position * 0.07, 0.8)})`;
+      } else if (position < 0) {
+        // Cards to the left
+        return `translateX(${Math.max(position * 20, -60)}px) scale(${Math.max(1 + position * 0.07, 0.8)})`;
+      }
+    }
+    return "translateX(0) scale(1)";
+  };
+
   return (
     <Card 
-      className={`song-card w-full aspect-[3/5] rounded-3xl overflow-hidden absolute ${cardClasses()} ${isActive ? "z-10" : "z-0"} bg-white dark:bg-gray-900`}
+      className={`song-card w-full max-w-xs overflow-hidden ${cardClasses()} transition-all duration-300 bg-white dark:bg-gray-900`}
+      style={{ 
+        zIndex: isActive ? 10 : Math.max(1, zIndex), 
+        transform: getTransform(),
+        opacity: isActive ? 1 : Math.max(0.6, 1 - Math.abs(position || 0) * 0.15)
+      }}
     >
-      <div className="relative h-full w-full flex flex-col">
-        {/* Album cover/artist image - taking up most of the card */}
-        <div className="relative h-4/5 overflow-hidden">
+      <div className="relative w-full flex flex-col">
+        {/* Album cover - made square with AspectRatio */}
+        <AspectRatio ratio={1 / 1} className="bg-gray-200">
           {song.coverImage ? (
             <img 
               src={song.coverImage} 
@@ -46,33 +71,21 @@ const SongCard: React.FC<SongCardProps> = ({
           )}
           
           {/* Favorite button */}
-          <button 
-            onClick={(e) => {
-              e.stopPropagation();
-              onFavorite();
-            }}
-            className="absolute top-4 right-4 p-2 bg-white/70 dark:bg-gray-800/70 rounded-full shadow-md"
-          >
-            <Heart 
-              size={20} 
-              className={isFavorite ? "fill-music-primary text-music-primary" : "text-gray-500"} 
-            />
-          </button>
-        </div>
-        
-        {/* Song info - at the bottom of the card */}
-        <div className="p-5 flex flex-col bg-white dark:bg-gray-900">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white line-clamp-1">{song.artist}</h2>
-              <div className="flex gap-2 mt-2">
-                <Badge variant="outline" className="bg-music-accent/20 text-gray-700 border-gray-300">
-                  {song.genre}
-                </Badge>
-              </div>
-            </div>
-          </div>
-        </div>
+          {isActive && (
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                onFavorite();
+              }}
+              className="absolute top-4 right-4 p-2 bg-white/70 dark:bg-gray-800/70 rounded-full shadow-md"
+            >
+              <Heart 
+                size={20} 
+                className={isFavorite ? "fill-music-primary text-music-primary" : "text-gray-500"} 
+              />
+            </button>
+          )}
+        </AspectRatio>
       </div>
     </Card>
   );

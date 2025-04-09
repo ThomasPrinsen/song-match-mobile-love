@@ -6,8 +6,10 @@ import MobileLayout from "@/components/MobileLayout";
 import NavBar from "@/components/NavBar";
 import RatingDialog from "@/components/RatingDialog";
 import { songs, Song } from "@/data/songs";
-import { Music } from "lucide-react";
+import { Music, Star } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
+import StarRating from "@/components/StarRating";
 
 const Index = () => {
   const [currentSongIndex, setCurrentSongIndex] = useState<number>(0);
@@ -16,6 +18,7 @@ const Index = () => {
   const [ratedSongs, setRatedSongs] = useState<number[]>([]);
   const [showRatingDialog, setShowRatingDialog] = useState<boolean>(false);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [rating, setRating] = useState<number>(0);
   const { toast } = useToast();
   
   // Filter songs by selected genres and exclude rated songs
@@ -33,6 +36,7 @@ const Index = () => {
       setCurrentSongIndex(0);
     }
     setIsPlaying(false);
+    setRating(0);
   };
   
   const handlePreviousSong = () => {
@@ -43,6 +47,7 @@ const Index = () => {
       setCurrentSongIndex(filteredSongs.length - 1);
     }
     setIsPlaying(false);
+    setRating(0);
   };
   
   const handleRate = () => {
@@ -63,6 +68,15 @@ const Index = () => {
         setCurrentSongIndex(0);
       }
       setShowRatingDialog(false);
+    }
+  };
+
+  const handleRatingChange = (newRating: number) => {
+    setRating(newRating);
+    if (newRating > 0) {
+      setTimeout(() => {
+        handleRatingSubmit(newRating);
+      }, 500);
     }
   };
   
@@ -116,8 +130,8 @@ const Index = () => {
   
   return (
     <MobileLayout>
-      <div className="h-full flex flex-col px-4 pt-10 pb-20 bg-gradient-to-b from-music-dark to-purple-950">
-        <header className="mb-6">
+      <div className="h-full flex flex-col px-4 pt-6 pb-20 bg-gradient-to-b from-music-dark to-purple-950">
+        <header className="mb-4">
           <div className="flex items-center justify-center space-x-2">
             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-music-primary to-music-secondary flex items-center justify-center">
               <span className="text-lg font-bold text-white">T</span>
@@ -131,21 +145,10 @@ const Index = () => {
           </p>
         </header>
         
-        <div className="flex-grow relative flex items-center justify-center">
-          {/* Card stack */}
-          <div className="relative w-full max-w-sm h-[70vh]">
-            {/* Current song card */}
-            {currentSong && (
-              <SongCard 
-                song={currentSong}
-                isActive={true}
-                swipeDirection="none"
-                onFavorite={handleToggleFavorite}
-                isFavorite={isFavorite}
-              />
-            )}
-            
-            {filteredSongs.length === 0 && (
+        <div className="flex-grow flex flex-col">
+          {/* Card carousel */}
+          <div className="relative w-full flex-grow flex items-center justify-center">
+            {filteredSongs.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-center">
                 <Music size={64} className="text-gray-300 mb-4" />
                 <h3 className="text-xl font-medium text-white mb-2">No more songs</h3>
@@ -153,33 +156,70 @@ const Index = () => {
                   You've rated all available songs in this genre. Try selecting different genres in your profile.
                 </p>
               </div>
+            ) : (
+              <div className="w-full max-w-sm">
+                <Carousel className="w-full">
+                  <CarouselContent className="h-full">
+                    {/* Use the carousel to display the songs in a horizontal stack */}
+                    {visibleSongs.map((song, index) => (
+                      <CarouselItem key={song.id} className="basis-full pl-0">
+                        <div className={`w-full flex flex-col items-center ${index === currentSongIndex % visibleSongs.length ? "z-10" : "z-0"}`}>
+                          <SongCard 
+                            song={song}
+                            isActive={index === currentSongIndex % visibleSongs.length}
+                            zIndex={5 - Math.abs(index - (currentSongIndex % visibleSongs.length))}
+                            position={index - (currentSongIndex % visibleSongs.length)}
+                            swipeDirection="none"
+                            onFavorite={index === currentSongIndex % visibleSongs.length ? handleToggleFavorite : () => {}}
+                            isFavorite={favoriteSongs.some(favSong => favSong.id === song.id)}
+                          />
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                </Carousel>
+              </div>
             )}
           </div>
+          
+          {/* Song info and rating */}
+          {currentSong && (
+            <div className="mb-4 text-center">
+              <h2 className="text-xl font-bold text-white mb-1">{currentSong.title}</h2>
+              <p className="text-sm text-gray-300 mb-2">{currentSong.artist}</p>
+              <StarRating 
+                rating={rating} 
+                onRatingChange={handleRatingChange}
+                size="md" 
+                className="justify-center mt-2" 
+              />
+            </div>
+          )}
+          
+          {/* Pagination dots */}
+          <div className="flex justify-center gap-2 mb-4">
+            {visibleSongs.map((_, index) => (
+              <div 
+                key={index}
+                className={`h-2 w-2 rounded-full ${
+                  index === (currentSongIndex % visibleSongs.length) 
+                    ? "bg-white" 
+                    : "bg-gray-500"
+                }`}
+              />
+            ))}
+          </div>
+          
+          <MusicControls 
+            isPlaying={isPlaying}
+            currentSong={currentSong}
+            onRate={handleRate}
+            onPrevious={handlePreviousSong}
+            onNext={handleNextSong}
+            canNavigatePrevious={filteredSongs.length > 1}
+            canNavigateNext={filteredSongs.length > 1}
+          />
         </div>
-        
-        {/* Pagination dots */}
-        <div className="flex justify-center gap-2 mb-4">
-          {visibleSongs.map((_, index) => (
-            <div 
-              key={index}
-              className={`h-2 w-2 rounded-full ${
-                index === (currentSongIndex % visibleSongs.length) 
-                  ? "bg-white" 
-                  : "bg-gray-500"
-              }`}
-            />
-          ))}
-        </div>
-        
-        <MusicControls 
-          isPlaying={isPlaying}
-          currentSong={currentSong}
-          onRate={handleRate}
-          onPrevious={handlePreviousSong}
-          onNext={handleNextSong}
-          canNavigatePrevious={filteredSongs.length > 1}
-          canNavigateNext={filteredSongs.length > 1}
-        />
       </div>
       
       <RatingDialog 
