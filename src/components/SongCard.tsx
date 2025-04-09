@@ -47,7 +47,7 @@ const SongCard: React.FC<SongCardProps> = ({
 
   return (
     <Card 
-      className={`song-card w-full max-w-sm overflow-hidden ${cardClasses()} transition-all duration-300 bg-white dark:bg-gray-900`}
+      className={`song-card w-full max-w-sm overflow-hidden ${cardClasses()} transition-all duration-300 bg-white dark:bg-gray-900 shadow-lg`}
       style={{ 
         zIndex: isActive ? 10 : Math.max(1, zIndex), 
         transform: getTransform(),
@@ -76,6 +76,7 @@ const SongCard: React.FC<SongCardProps> = ({
               onFavorite();
             }}
             className="absolute top-4 right-4 p-2 bg-white/70 dark:bg-gray-800/70 rounded-full shadow-md hover:scale-110 transition-transform"
+            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
           >
             <Heart 
               size={20} 

@@ -139,7 +139,7 @@ const Index = () => {
               Thammy
             </h1>
           </div>
-          <p className="text-center text-gray-300 text-sm mt-1">
+          <p className="text-center text-white text-sm mt-1 font-medium">
             Where music breaks through
           </p>
         </header>
@@ -149,7 +149,7 @@ const Index = () => {
             <div className="flex flex-col items-center justify-center h-full text-center">
               <Music size={64} className="text-gray-300 mb-4" />
               <h3 className="text-xl font-medium text-white mb-2">No more songs</h3>
-              <p className="text-gray-300 max-w-xs">
+              <p className="text-white max-w-xs">
                 You've rated all available songs in this genre. Try selecting different genres in your profile.
               </p>
             </div>
@@ -175,7 +175,11 @@ const Index = () => {
                             zIndex={5 - Math.abs(index - (currentSongIndex % visibleSongs.length))}
                             position={index - (currentSongIndex % visibleSongs.length)}
                             swipeDirection="none"
-                            onFavorite={handleToggleFavorite}
+                            onFavorite={() => {
+                              if (index === currentSongIndex % visibleSongs.length) {
+                                handleToggleFavorite();
+                              }
+                            }}
                             isFavorite={favoriteSongs.some(favSong => favSong.id === song.id)}
                           />
                         </div>
@@ -188,7 +192,7 @@ const Index = () => {
               {currentSong && (
                 <div className="mt-6 text-center animate-fade-in">
                   <h2 className="text-2xl font-bold text-white mb-2">{currentSong.title}</h2>
-                  <p className="text-md text-gray-300 mb-4">{currentSong.artist}</p>
+                  <p className="text-md text-white mb-4 font-medium">{currentSong.artist}</p>
                   <div className="flex justify-center">
                     <StarRating 
                       rating={rating} 
@@ -207,7 +211,7 @@ const Index = () => {
                     className={`h-2 w-2 rounded-full transition-all duration-300 ${
                       index === (currentSongIndex % visibleSongs.length) 
                         ? "bg-white w-4" 
-                        : "bg-gray-500"
+                        : "bg-gray-400"
                     }`}
                   />
                 ))}
