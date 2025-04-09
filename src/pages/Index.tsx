@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import SongCard from "@/components/SongCard";
 import MobileLayout from "@/components/MobileLayout";
@@ -112,9 +113,13 @@ const Index = () => {
     }
   }, []);
 
-  const handleCarouselChange = (index: number) => {
-    setCurrentSongIndex(index);
-    setRating(0);
+  // Fixed carousel change handler to match expected ReactEventHandler type
+  const handleCarouselChange = (api: any) => {
+    const selectedIndex = api?.selectedScrollSnap();
+    if (selectedIndex !== undefined) {
+      setCurrentSongIndex(selectedIndex);
+      setRating(0);
+    }
   };
 
   const visibleSongs = filteredSongs.slice(0, 5);
@@ -156,7 +161,7 @@ const Index = () => {
                     containScroll: false,
                     dragFree: true
                   }}
-                  onSelect={handleCarouselChange}
+                  setApi={handleCarouselChange}
                 >
                   <CarouselContent className="h-full">
                     {visibleSongs.map((song, index) => (
