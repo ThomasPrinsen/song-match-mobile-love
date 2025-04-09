@@ -1,13 +1,14 @@
-
 export type Song = {
   id: string;
   title: string;
   artist: string;
   coverImage: string;
+  coverArt?: string;
   genre: string;
   previewUrl: string;
   duration: string;
   releaseYear: number;
+  rating?: number;
 };
 
 export const songs: Song[] = [

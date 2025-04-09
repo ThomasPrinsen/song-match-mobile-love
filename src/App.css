@@ -40,3 +40,72 @@
 .read-the-docs {
   color: #888;
 }
+
+/* New mobile app styles */
+.container {
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.song-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  padding: 1.5em;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.song-card:hover {
+  transform: translateY(-2px);
+}
+
+.interactive-element {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+/* Navigation bar styles */
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  background: rgba(28, 27, 34, 0.8);
+}
+
+/* Profile section styles */
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin: 24px 0;
+}
+
+.genre-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 16px 0;
+}
+
+.genre-tag {
+  padding: 6px 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  font-size: 0.9em;
+}
+
+/* Star rating styles */
+.star-rating {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  margin: 12px 0;
+}

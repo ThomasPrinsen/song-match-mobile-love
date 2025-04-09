@@ -1,21 +1,13 @@
-
-import React, { ReactNode } from "react";
-import { useIsMobile } from "@/hooks/use-mobile";
+import React from "react";
 
 interface MobileLayoutProps {
-  children: ReactNode;
+  children: React.ReactNode;
 }
 
-const MobileLayout: React.FC<MobileLayoutProps> = ({ children }) => {
-  const isMobile = useIsMobile();
-  
+const MobileLayout = ({ children }: MobileLayoutProps) => {
   return (
-    <div className="w-full min-h-screen max-h-screen bg-gradient-to-b from-music-dark to-purple-950 flex items-center justify-center overflow-hidden">
-      <div 
-        className={`${
-          isMobile ? "w-full h-screen" : "w-[390px] h-[844px] rounded-3xl shadow-xl"
-        } overflow-hidden relative bg-gradient-to-b from-music-dark to-purple-950`}
-      >
+    <div className="relative h-screen w-full max-w-md mx-auto overflow-hidden">
+      <div className="absolute inset-0 overflow-y-auto">
         {children}
       </div>
     </div>
