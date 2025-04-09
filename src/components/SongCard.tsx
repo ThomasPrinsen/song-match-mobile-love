@@ -84,6 +84,14 @@ const SongCard: React.FC<SongCardProps> = ({
             />
           </button>
         </AspectRatio>
+        
+        {/* Song title and artist - display when active */}
+        {isActive && (
+          <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 text-white">
+            <h3 className="font-bold text-lg line-clamp-1">{song.title}</h3>
+            <p className="text-sm opacity-90">{song.artist}</p>
+          </div>
+        )}
       </div>
     </Card>
   );
