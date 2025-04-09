@@ -21,7 +21,7 @@ const Index = () => {
   // Filter songs by selected genres and exclude rated songs
   const filteredSongs = songs
     .filter(song => selectedGenres.length === 0 || selectedGenres.includes(song.genre))
-    .filter(song => !ratedSongs.includes(song.id));
+    .filter(song => !ratedSongs.includes(parseInt(song.id.replace('song', ''))));
   
   const currentSong = filteredSongs.length > 0 ? filteredSongs[currentSongIndex % filteredSongs.length] : null;
   
@@ -51,8 +51,9 @@ const Index = () => {
   
   const handleRatingSubmit = (rating: number) => {
     if (currentSong) {
-      // Add to rated songs
-      setRatedSongs(prev => [...prev, currentSong.id]);
+      // Add to rated songs - convert the song ID to a number
+      const songIdNumber = parseInt(currentSong.id.replace('song', ''));
+      setRatedSongs(prev => [...prev, songIdNumber]);
       
       // Continue to next song if available
       if (filteredSongs.length > 1) {
