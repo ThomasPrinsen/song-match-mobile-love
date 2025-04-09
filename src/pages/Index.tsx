@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import SongCard from "@/components/SongCard";
 import MobileLayout from "@/components/MobileLayout";
@@ -18,7 +17,6 @@ const Index = () => {
   const [rating, setRating] = useState<number>(0);
   const { toast } = useToast();
   
-  // Filter songs by selected genres and exclude rated songs
   const filteredSongs = songs
     .filter(song => selectedGenres.length === 0 || selectedGenres.includes(song.genre))
     .filter(song => !ratedSongs.includes(parseInt(song.id.replace('song', ''))));
@@ -29,7 +27,6 @@ const Index = () => {
     if (currentSongIndex < filteredSongs.length - 1) {
       setCurrentSongIndex(currentSongIndex + 1);
     } else if (filteredSongs.length > 1) {
-      // Loop back to the first song when we reach the end
       setCurrentSongIndex(0);
     }
     setIsPlaying(false);
@@ -40,7 +37,6 @@ const Index = () => {
     if (currentSongIndex > 0) {
       setCurrentSongIndex(currentSongIndex - 1);
     } else if (filteredSongs.length > 1) {
-      // Loop to the last song if at the beginning
       setCurrentSongIndex(filteredSongs.length - 1);
     }
     setIsPlaying(false);
@@ -49,7 +45,6 @@ const Index = () => {
   
   const handleRatingSubmit = (rating: number) => {
     if (currentSong && rating > 0) {
-      // Add to rated songs - convert the song ID to a number
       const songIdNumber = parseInt(currentSong.id.replace('song', ''));
       setRatedSongs(prev => [...prev, songIdNumber]);
       
@@ -58,11 +53,9 @@ const Index = () => {
         description: `You gave "${currentSong.title}" ${rating} stars!`,
       });
       
-      // Continue to next song if available
       if (filteredSongs.length > 1) {
         handleNextSong();
       } else {
-        // Reset current index if this was the last song
         setCurrentSongIndex(0);
       }
     }
@@ -73,7 +66,7 @@ const Index = () => {
     if (newRating > 0) {
       setTimeout(() => {
         handleRatingSubmit(newRating);
-      }, 800); // Give user a moment to see their selection
+      }, 800);
     }
   };
   
@@ -97,13 +90,11 @@ const Index = () => {
     }
   };
   
-  // Save data to localStorage
   useEffect(() => {
     localStorage.setItem("favoriteSongs", JSON.stringify(favoriteSongs));
     localStorage.setItem("ratedSongs", JSON.stringify(ratedSongs));
   }, [favoriteSongs, ratedSongs]);
   
-  // Load data from localStorage on initial render
   useEffect(() => {
     const savedFavorites = localStorage.getItem("favoriteSongs");
     if (savedFavorites) {
@@ -121,13 +112,11 @@ const Index = () => {
     }
   }, []);
 
-  // Handle carousel swiping
   const handleCarouselChange = (index: number) => {
     setCurrentSongIndex(index);
-    setRating(0); // Reset rating when changing songs
+    setRating(0);
   };
 
-  // Limit the number of visible songs to 5 maximum
   const visibleSongs = filteredSongs.slice(0, 5);
   const isFavorite = currentSong ? favoriteSongs.some(song => song.id === currentSong.id) : false;
   
@@ -165,9 +154,9 @@ const Index = () => {
                   opts={{
                     align: "center",
                     containScroll: false,
-                    draggable: true,
+                    dragFree: true
                   }}
-                  onSlideChange={handleCarouselChange}
+                  onSelect={handleCarouselChange}
                 >
                   <CarouselContent className="h-full">
                     {visibleSongs.map((song, index) => (
@@ -189,7 +178,6 @@ const Index = () => {
                 </Carousel>
               </div>
               
-              {/* Song info and rating */}
               {currentSong && (
                 <div className="mt-6 text-center animate-fade-in">
                   <h2 className="text-2xl font-bold text-white mb-2">{currentSong.title}</h2>
@@ -205,7 +193,6 @@ const Index = () => {
                 </div>
               )}
               
-              {/* Pagination dots */}
               <div className="flex justify-center gap-2 mt-6">
                 {visibleSongs.map((_, index) => (
                   <div 
