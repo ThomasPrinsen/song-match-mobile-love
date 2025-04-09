@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import * as TooltipPrimitive from "@radix-ui/react-tooltip"
 
@@ -24,5 +25,14 @@ const TooltipContent = React.forwardRef<
   />
 ))
 TooltipContent.displayName = TooltipPrimitive.Content.displayName
+
+// Export a wrapper component that automatically uses TooltipProvider
+export function TooltipWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <TooltipProvider>
+      {children}
+    </TooltipProvider>
+  );
+}
 
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }

@@ -16,19 +16,22 @@ const queryClient = new QueryClient();
 const App = () => (
   <BrowserRouter>
     <QueryClientProvider client={queryClient}>
+      {/* TooltipProvider moved to be a sibling of Routes instead of wrapping it */}
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/discover" element={<Index />} />
+        <Route path="/favourites" element={<FavouritesPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+      {/* TooltipProvider now only wraps components that need tooltips */}
       <TooltipProvider>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/discover" element={<Index />} />
-          <Route path="/favourites" element={<FavouritesPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/" element={<Navigate to="/login" replace />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-        <Toaster />
-        <Sonner />
+        <div id="tooltip-container" />
       </TooltipProvider>
+      <Toaster />
+      <Sonner />
     </QueryClientProvider>
   </BrowserRouter>
 );
