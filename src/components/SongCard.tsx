@@ -34,13 +34,12 @@ const SongCard: React.FC<SongCardProps> = ({
   // Calculate position transformations for the stack effect
   const getTransform = () => {
     if (!isActive && position !== undefined) {
-      // If not the active card, apply offset based on position
       if (position > 0) {
-        // Cards to the right
-        return `translateX(${Math.min(position * 20, 60)}px) scale(${Math.max(1 - position * 0.07, 0.8)})`;
+        // Cards to the right - appear behind
+        return `translateX(${Math.min(position * 12, 40)}px) scale(${Math.max(1 - position * 0.05, 0.85)})`;
       } else if (position < 0) {
-        // Cards to the left
-        return `translateX(${Math.max(position * 20, -60)}px) scale(${Math.max(1 + position * 0.07, 0.8)})`;
+        // Cards to the left - appear behind
+        return `translateX(${Math.max(position * 12, -40)}px) scale(${Math.max(1 + position * 0.05, 0.85)})`;
       }
     }
     return "translateX(0) scale(1)";
@@ -48,11 +47,11 @@ const SongCard: React.FC<SongCardProps> = ({
 
   return (
     <Card 
-      className={`song-card w-full max-w-xs overflow-hidden ${cardClasses()} transition-all duration-300 bg-white dark:bg-gray-900`}
+      className={`song-card w-full max-w-sm overflow-hidden ${cardClasses()} transition-all duration-300 bg-white dark:bg-gray-900`}
       style={{ 
         zIndex: isActive ? 10 : Math.max(1, zIndex), 
         transform: getTransform(),
-        opacity: isActive ? 1 : Math.max(0.6, 1 - Math.abs(position || 0) * 0.15)
+        opacity: isActive ? 1 : Math.max(0.7, 1 - Math.abs(position || 0) * 0.15)
       }}
     >
       <div className="relative w-full flex flex-col">
@@ -71,20 +70,18 @@ const SongCard: React.FC<SongCardProps> = ({
           )}
           
           {/* Favorite button */}
-          {isActive && (
-            <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                onFavorite();
-              }}
-              className="absolute top-4 right-4 p-2 bg-white/70 dark:bg-gray-800/70 rounded-full shadow-md"
-            >
-              <Heart 
-                size={20} 
-                className={isFavorite ? "fill-music-primary text-music-primary" : "text-gray-500"} 
-              />
-            </button>
-          )}
+          <button 
+            onClick={(e) => {
+              e.stopPropagation();
+              onFavorite();
+            }}
+            className="absolute top-4 right-4 p-2 bg-white/70 dark:bg-gray-800/70 rounded-full shadow-md hover:scale-110 transition-transform"
+          >
+            <Heart 
+              size={20} 
+              className={isFavorite ? "fill-music-primary text-music-primary" : "text-gray-500"} 
+            />
+          </button>
         </AspectRatio>
       </div>
     </Card>

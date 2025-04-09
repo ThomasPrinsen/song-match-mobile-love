@@ -25,58 +25,34 @@ const StarRating: React.FC<StarRatingProps> = ({
   const totalStars = 5;
   
   const handleStarClick = (starIndex: number) => {
-    // If clicking on the same star that's already half-filled, make it full
-    if (rating === starIndex - 0.5) {
-      onRatingChange(starIndex);
-      return;
-    }
-    
-    // If clicking on a full star, make it half
-    if (rating === starIndex) {
-      onRatingChange(starIndex - 0.5);
-      return;
-    }
-    
+    // If clicking on the same star that's already selected, keep it
     // Otherwise set to the clicked value
     onRatingChange(starIndex);
   };
   
-  const handleStarHalfClick = (starIndex: number) => {
-    // Set to half star
-    onRatingChange(starIndex - 0.5);
-  };
-  
   return (
-    <div className={cn("flex", className)}>
+    <div className={cn("flex items-center space-x-1", className)}>
       {[...Array(totalStars)].map((_, index) => {
         const starValue = index + 1;
         const isFilled = rating >= starValue;
         const isHalfFilled = !isFilled && rating + 0.5 >= starValue;
         
         return (
-          <div key={index} className="relative cursor-pointer">
-            {/* Left half (for half-star selection) */}
-            <div
-              className="absolute top-0 left-0 h-full w-1/2 z-10"
-              onClick={() => handleStarHalfClick(starValue)}
-            />
-            
-            {/* Right half (for full-star selection) */}
-            <div
-              className="absolute top-0 right-0 h-full w-1/2 z-10"
-              onClick={() => handleStarClick(starValue)}
-            />
-            
-            {/* Star icon */}
+          <div 
+            key={index} 
+            className="relative cursor-pointer transition-transform hover:scale-110"
+            onClick={() => handleStarClick(starValue)}
+          >
             <Star
               size={iconSize}
-              className={
+              className={cn(
+                "transition-all duration-300",
                 isFilled 
                   ? "text-amber-400 fill-amber-400" 
                   : isHalfFilled 
-                  ? "text-amber-400 stroke-amber-400" 
+                  ? "text-amber-400 fill-amber-400" 
                   : "text-gray-300"
-              }
+              )}
               fill={isFilled ? "currentColor" : isHalfFilled ? "url(#half)" : "none"}
             />
             
