@@ -113,12 +113,14 @@ const Index = () => {
     }
   }, []);
 
-  // Fixed carousel change handler to match expected ReactEventHandler type
+  // Fixed carousel change handler to use the API
   const handleCarouselChange = (api: any) => {
-    const selectedIndex = api?.selectedScrollSnap();
-    if (selectedIndex !== undefined) {
-      setCurrentSongIndex(selectedIndex);
-      setRating(0);
+    if (api) {
+      api.on('select', () => {
+        const selectedIndex = api.selectedScrollSnap();
+        setCurrentSongIndex(selectedIndex);
+        setRating(0);
+      });
     }
   };
 
@@ -127,13 +129,13 @@ const Index = () => {
   
   return (
     <MobileLayout>
-      <div className="h-full flex flex-col px-4 pt-6 pb-20 bg-gradient-to-b from-music-dark to-purple-950">
-        <header className="mb-4">
+      <div className="h-full flex flex-col bg-gradient-to-b from-music-dark to-purple-950">
+        <header className="pt-10 pb-4 px-4">
           <div className="flex items-center justify-center space-x-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-music-primary to-music-secondary flex items-center justify-center">
-              <span className="text-lg font-bold text-white">T</span>
+            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-music-primary to-music-secondary flex items-center justify-center">
+              <span className="text-xl font-bold text-white">T</span>
             </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-music-primary to-music-secondary bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-music-primary to-music-secondary bg-clip-text text-transparent">
               Thammy
             </h1>
           </div>
@@ -142,7 +144,7 @@ const Index = () => {
           </p>
         </header>
         
-        <div className="flex-grow flex flex-col justify-center items-center">
+        <div className="flex-grow flex flex-col justify-center items-center px-4">
           {filteredSongs.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <Music size={64} className="text-gray-300 mb-4" />
@@ -153,7 +155,7 @@ const Index = () => {
             </div>
           ) : (
             <div className="w-full max-w-md">
-              <div className="carousel-container relative w-full" style={{ height: "auto" }}>
+              <div className="carousel-container relative w-full my-8" style={{ perspective: '1000px' }}>
                 <Carousel 
                   className="w-full"
                   opts={{
