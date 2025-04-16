@@ -3,11 +3,14 @@ import SongCard from "@/components/SongCard";
 import MobileLayout from "@/components/MobileLayout";
 import NavBar from "@/components/NavBar";
 import { songs, Song } from "@/data/songs";
-import { Music } from "lucide-react";
+import { Music, Pause, Play, Settings, History } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import StarRating from "@/components/StarRating";
 import { type CarouselApi } from "@/components/ui/carousel";
+import SettingsPage from "@/components/SettingsPage";
+import HistoryPage from "@/components/HistoryPage";
+import { usePlayback } from "@/contexts/PlaybackContext";
 
 const sampleSongs: Song[] = [
   {
@@ -67,10 +70,24 @@ const sampleSongs: Song[] = [
   }
 ];
 
+const getGenreColor = (genre: string): string => {
+  const colors: { [key: string]: string } = {
+    'Electronic': 'bg-blue-500/50',
+    'Alternative': 'bg-purple-500/50',
+    'Rock': 'bg-red-500/50',
+    'Pop': 'bg-pink-500/50',
+    'Hip Hop': 'bg-yellow-500/50',
+    'R&B': 'bg-green-500/50',
+    'Jazz': 'bg-orange-500/50',
+    'Classical': 'bg-indigo-500/50',
+    // Add more genres and colors as needed
+  };
+  return colors[genre] || 'bg-gray-500/50'; // Default color if genre not found
+};
+
 const Index = () => {
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [songs, setSongs] = useState(sampleSongs);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [favoriteSongs, setFavoriteSongs] = useState<Song[]>([]);
   const [ratedSongs, setRatedSongs] = useState<number[]>([]);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
@@ -78,12 +95,16 @@ const Index = () => {
   const { toast } = useToast();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [api, setApi] = useState<CarouselApi>();
+  const [completedSlides, setCompletedSlides] = useState<number[]>([]);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const { playSong, pauseSong, currentSong: globalCurrentSong, isPlaying } = usePlayback();
   
   const filteredSongs = songs
     .filter(song => selectedGenres.length === 0 || selectedGenres.includes(song.genre))
     .filter(song => !ratedSongs.includes(parseInt(song.id.substring(4))));
   
-  const currentSong = filteredSongs.length > 0 ? filteredSongs[currentSongIndex % filteredSongs.length] : null;
+  const currentSong = filteredSongs.length > 0 ? filteredSongs[currentSlide % filteredSongs.length] : null;
   
   const handleNextSong = () => {
     if (currentSongIndex < filteredSongs.length - 1) {
@@ -91,7 +112,6 @@ const Index = () => {
     } else if (filteredSongs.length > 1) {
       setCurrentSongIndex(0);
     }
-    setIsPlaying(false);
     setRating(0);
   };
   
@@ -101,7 +121,6 @@ const Index = () => {
     } else if (filteredSongs.length > 1) {
       setCurrentSongIndex(filteredSongs.length - 1);
     }
-    setIsPlaying(false);
     setRating(0);
   };
   
@@ -123,13 +142,40 @@ const Index = () => {
     }
   };
 
+  const handleRatingConfirm = (newRating: number) => {
+    handleRatingSubmit(newRating);
+    setCompletedSlides(prev => [...prev, currentSlide]);
+  };
+
   const handleRatingChange = (newRating: number) => {
+    toast({
+      title: `Rate "${currentSong?.title}" ${newRating} stars?`,
+      description: "Confirm your rating to continue",
+      action: (
+        <div className="flex gap-2 mt-2">
+          <button
+            onClick={() => {
+              handleRatingConfirm(newRating);
+              toast({
+                title: "Rating Saved!",
+                description: `You gave "${currentSong?.title}" ${newRating} stars`,
+              });
+            }}
+            className="px-4 py-2 rounded-xl bg-purple-500 text-white hover:bg-purple-600"
+          >
+            Confirm
+          </button>
+          <button
+            onClick={() => setRating(0)}
+            className="px-4 py-2 rounded-xl bg-gray-500 text-white hover:bg-gray-600"
+          >
+            Cancel
+          </button>
+        </div>
+      ),
+      duration: 5000,
+    });
     setRating(newRating);
-    if (newRating > 0) {
-      setTimeout(() => {
-        handleRatingSubmit(newRating);
-      }, 800);
-    }
   };
   
   const handleToggleFavorite = () => {
@@ -155,7 +201,8 @@ const Index = () => {
   useEffect(() => {
     localStorage.setItem("favoriteSongs", JSON.stringify(favoriteSongs));
     localStorage.setItem("ratedSongs", JSON.stringify(ratedSongs));
-  }, [favoriteSongs, ratedSongs]);
+    localStorage.setItem("completedSlides", JSON.stringify(completedSlides));
+  }, [favoriteSongs, ratedSongs, completedSlides]);
   
   useEffect(() => {
     const savedFavorites = localStorage.getItem("favoriteSongs");
@@ -172,6 +219,11 @@ const Index = () => {
     if (savedGenres) {
       setSelectedGenres(JSON.parse(savedGenres));
     }
+    
+    const savedCompletedSlides = localStorage.getItem("completedSlides");
+    if (savedCompletedSlides) {
+      setCompletedSlides(JSON.parse(savedCompletedSlides));
+    }
   }, []);
 
   useEffect(() => {
@@ -180,38 +232,92 @@ const Index = () => {
     }
 
     api.on("select", () => {
-      setCurrentSlide(api.selectedScrollSnap());
-      setCurrentSongIndex(api.selectedScrollSnap());
+      const newIndex = api.selectedScrollSnap();
+      setCurrentSlide(newIndex);
+      setCurrentSongIndex(newIndex);
       setRating(0);
+
+      const newSong = filteredSongs[newIndex];
+      if (newSong) {
+        if (isPlaying) {
+          playSong(newSong);
+        } else {
+          playSong(newSong);
+          pauseSong();
+        }
+      }
     });
-  }, [api]);
+  }, [api, filteredSongs, isPlaying, playSong, pauseSong]);
 
   const visibleSongs = filteredSongs.slice(0, 5);
   const isFavorite = favoriteSongs.some(song => song.id === currentSong?.id);
   
   const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
-    // Add actual audio playback logic here
+    if (currentSong) {
+      if (globalCurrentSong?.id !== currentSong.id) {
+        playSong(currentSong);
+      } else {
+        if (isPlaying) {
+          pauseSong();
+        } else {
+          playSong(currentSong);
+        }
+      }
+    }
+  };
+
+  const handleGenreToggle = (genre: string) => {
+    setSelectedGenres(prev => 
+      prev.includes(genre) 
+        ? prev.filter(g => g !== genre)
+        : [...prev, genre]
+    );
+  };
+
+  const handleRatingUpdate = (songId: string, newRating: number) => {
+    setSongs(prevSongs => 
+      prevSongs.map(song => 
+        song.id === songId 
+          ? { ...song, rating: newRating }
+          : song
+      )
+    );
+    
+    toast({
+      title: "Rating Updated",
+      description: `Rating updated to ${newRating} stars`,
+      duration: 2000,
+    });
   };
 
   return (
     <MobileLayout>
-      <div className="min-h-full flex flex-col bg-gradient-to-b from-music-dark to-purple-950 pb-20">
-        <header className="pt-10 pb-4 px-4">
-          <div className="flex items-center justify-center space-x-2">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-music-primary to-music-secondary flex items-center justify-center">
-              <span className="text-xl font-bold text-white">T</span>
-            </div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-music-primary to-music-secondary bg-clip-text text-transparent">
+      <div className="min-h-full flex flex-col bg-gradient-to-b from-purple-900 to-purple-950">
+        {/* Top Navigation Bar */}
+        <header className="px-6 py-4 bg-black/20 backdrop-blur-lg rounded-b-3xl">
+          <div className="flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-white">
               Thammy
             </h1>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setIsHistoryOpen(true)}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20"
+              >
+                <History className="w-5 h-5 text-white" />
+              </button>
+              <button 
+                onClick={() => setIsSettingsOpen(true)}
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20"
+              >
+                <Settings className="w-5 h-5 text-white" />
+              </button>
+            </div>
           </div>
-          <p className="text-center text-white text-sm mt-1 font-medium">
-            Where music breaks through
-          </p>
         </header>
-        
-        <div className="flex-grow flex flex-col justify-center items-center px-2">
+
+        {/* Main Content - Add pb-32 to account for playback bar */}
+        <div className="flex-grow flex flex-col justify-center items-center px-4 pt-2 pb-32">
           {filteredSongs.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
               <Music size={64} className="text-gray-300 mb-4" />
@@ -226,75 +332,140 @@ const Index = () => {
                 opts={{
                   align: "center",
                   loop: false,
-                  dragFree: false,
                   containScroll: "trimSnaps",
                   skipSnaps: false
                 }}
                 className="w-full relative"
                 setApi={setApi}
               >
-                <CarouselContent>
+                <CarouselContent className="-ml-2">
                   {filteredSongs.slice(0, 5).map((song, index) => (
                     <CarouselItem 
                       key={song.id} 
-                      className="basis-[70%] md:basis-[70%] pl-4"
+                      className="pl-2 basis-[95%]"
                     >
-                      <div className="mx-auto max-w-[90%]">
-                        <div className="relative transform transition-transform duration-300 hover:scale-[1.02]">
-                          <SongCard 
-                            song={song}
-                            isActive={index === currentSongIndex}
-                            onFavorite={() => {
-                              if (index === currentSongIndex) {
-                                handleToggleFavorite();
-                              }
-                            }}
-                            isFavorite={favoriteSongs.some(favSong => favSong.id === song.id)}
-                            isPlaying={isPlaying && index === currentSongIndex}
-                            onPlayPause={handlePlayPause}
-                            rating={rating}
-                          />
-                          
-                          <div className="star-rating mt-4 flex justify-center space-x-2">
-                            {[1, 2, 3, 4, 5].map((star) => (
-                              <button
-                                key={star}
-                                onClick={() => handleRatingChange(star)}
-                                className={`text-2xl transition-colors ${
-                                  star <= (rating || 0)
-                                    ? 'text-yellow-400'
-                                    : 'text-gray-400 hover:text-yellow-200'
-                                }`}
-                              >
-                                ★
-                              </button>
-                            ))}
+                      <div className="p-2">
+                        <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 shadow-xl">
+                          {/* Song Card Content with clickable cover */}
+                          <div className="relative aspect-square rounded-2xl overflow-hidden mb-6 cursor-pointer"
+                            onClick={handlePlayPause}
+                          >
+                            <img 
+                              src={song.coverImage}
+                              alt={song.title}
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+                            
+                            {/* Play/Pause Overlay */}
+                            <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity">
+                              {isPlaying && globalCurrentSong?.id === song.id ? (
+                                <Pause className="w-16 h-16 text-white" />
+                              ) : (
+                                <Play className="w-16 h-16 text-white" />
+                              )}
+                            </div>
+
+                            <div className="absolute bottom-0 left-0 right-0 p-6">
+                              <h2 className="text-3xl font-bold text-white mb-2">{song.title}</h2>
+                              <p className="text-white/90 text-xl">{song.artist}</p>
+                            </div>
+                          </div>
+
+                          {/* Tags - with colors based on genre */}
+                          <div className="flex flex-wrap gap-2 mb-6">
+                            <span className={`px-4 py-2 rounded-full text-white text-sm font-medium ${
+                              getGenreColor(song.genre)
+                            }`}>
+                              {song.genre}
+                            </span>
+                          </div>
+
+                          {/* Star Rating - smaller and more compact */}
+                          <div className="flex flex-col items-center gap-4">
+                            <div className="flex justify-center gap-4">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <button
+                                  key={star}
+                                  onClick={() => setRating(star)}
+                                  className={`transform transition-all duration-200 ${
+                                    star <= rating
+                                      ? 'text-yellow-400 scale-110'
+                                      : 'text-white/40 hover:text-yellow-200 hover:scale-105'
+                                  }`}
+                                >
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor"
+                                    className="w-10 h-10"
+                                  >
+                                    <path fillRule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z" clipRule="evenodd" />
+                                  </svg>
+                                </button>
+                              ))}
+                            </div>
+                            
+                            {/* Confirm Button - Always visible with disabled state */}
+                            <button
+                              onClick={() => {
+                                handleRatingConfirm(rating);
+                                toast({
+                                  title: "Rating Saved!",
+                                  description: `You gave "${currentSong?.title}" ${rating} stars`,
+                                  duration: 2000,
+                                });
+                              }}
+                              disabled={rating === 0}
+                              className={`px-8 py-2 rounded-full font-medium transition-colors ${
+                                rating > 0 
+                                  ? 'bg-purple-500 text-white hover:bg-purple-600' 
+                                  : 'bg-gray-400 text-gray-200 cursor-not-allowed'
+                              }`}
+                            >
+                              Confirm
+                            </button>
                           </div>
                         </div>
                       </div>
                     </CarouselItem>
                   ))}
                 </CarouselContent>
-                
-                <div className="flex justify-center gap-2 mt-6">
-                  {filteredSongs.slice(0, 5).map((_, index) => (
-                    <div
-                      key={index}
-                      className={`h-2 rounded-full transition-all duration-300 ${
-                        index === currentSlide
-                          ? 'w-8 bg-white' 
-                          : 'w-2 bg-white/40 hover:bg-white/60'
-                      }`}
-                    />
-                  ))}
-                </div>
               </Carousel>
+              <div className="flex justify-center gap-3 mt-6 mb-4">
+                {filteredSongs.slice(0, 5).map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      index === currentSlide
+                        ? 'w-6 bg-white' // Current slide
+                        : completedSlides.includes(index)
+                        ? 'bg-green-500' // Completed slide
+                        : 'bg-white/40' // Future slide
+                    }`}
+                  />
+                ))}
+              </div>
             </div>
           )}
         </div>
+
+        {/* NavBar */}
+        <NavBar />
       </div>
-      
-      <NavBar />
+      <SettingsPage 
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        selectedGenres={selectedGenres}
+        onGenreToggle={handleGenreToggle}
+      />
+      <HistoryPage 
+        isOpen={isHistoryOpen}
+        onClose={() => setIsHistoryOpen(false)}
+        ratedSongs={ratedSongs}
+        allSongs={songs}
+        onRatingUpdate={handleRatingUpdate}
+      />
     </MobileLayout>
   );
 };
