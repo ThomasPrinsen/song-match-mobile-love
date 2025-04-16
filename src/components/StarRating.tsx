@@ -4,16 +4,18 @@ import { cn } from "@/lib/utils";
 
 interface StarRatingProps {
   rating: number;
-  onRatingChange: (rating: number) => void;
+  onRatingChange?: (rating: number) => void;
   size?: "sm" | "md" | "lg";
   className?: string;
+  readonly?: boolean;
 }
 
 const StarRating: React.FC<StarRatingProps> = ({
   rating,
   onRatingChange,
   size = "md",
-  className
+  className,
+  readonly = false
 }) => {
   const sizes = {
     sm: 16,
@@ -25,9 +27,8 @@ const StarRating: React.FC<StarRatingProps> = ({
   const totalStars = 5;
   
   const handleStarClick = (starIndex: number) => {
-    // If clicking on the same star that's already selected, keep it
-    // Otherwise set to the clicked value
-    onRatingChange(starIndex);
+    if (readonly) return;
+    onRatingChange?.(starIndex);
   };
   
   return (
@@ -40,7 +41,10 @@ const StarRating: React.FC<StarRatingProps> = ({
         return (
           <div 
             key={index} 
-            className="relative cursor-pointer transition-transform hover:scale-110"
+            className={cn(
+              "relative transition-transform",
+              !readonly && "cursor-pointer hover:scale-110"
+            )}
             onClick={() => handleStarClick(starValue)}
           >
             <Star

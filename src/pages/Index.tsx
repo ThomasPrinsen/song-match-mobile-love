@@ -124,57 +124,42 @@ const Index = () => {
     setRating(0);
   };
   
-  const handleRatingSubmit = (rating: number) => {
-    if (currentSong && rating > 0) {
-      const songIdNumber = parseInt(currentSong.id.substring(4));
-      setRatedSongs(prev => [...prev, songIdNumber]);
-      
-      toast({
-        title: "Song Rated",
-        description: `You gave "${currentSong.title}" ${rating} stars!`,
-      });
-      
-      if (filteredSongs.length > 1) {
-        handleNextSong();
-      } else {
-        setCurrentSongIndex(0);
-      }
-    }
-  };
-
   const handleRatingConfirm = (newRating: number) => {
-    handleRatingSubmit(newRating);
+    if (!currentSong) return;
+
+    // Update the song's rating in the songs array
+    const updatedSongs = songs.map(song => 
+      song.id === currentSong.id 
+        ? { ...song, rating: newRating }
+        : song
+    );
+    setSongs(updatedSongs);
+
+    // Store the updated songs in localStorage
+    localStorage.setItem("allSongs", JSON.stringify(updatedSongs));
+
+    // Add to rated songs
+    const songIdNumber = parseInt(currentSong.id.substring(4));
+    setRatedSongs(prev => [...prev, songIdNumber]);
     setCompletedSlides(prev => [...prev, currentSlide]);
+
+    // If it's a 5-star rating, update the five star songs list
+    if (newRating === 5) {
+      const fiveStarSongs = JSON.parse(localStorage.getItem("fiveStarSongs") || "[]");
+      fiveStarSongs.push(currentSong);
+      localStorage.setItem("fiveStarSongs", JSON.stringify(fiveStarSongs));
+    }
+
+    // Move to next song if available
+    if (filteredSongs.length > 1) {
+      handleNextSong();
+    } else {
+      setCurrentSongIndex(0);
+    }
+    setRating(0);
   };
 
   const handleRatingChange = (newRating: number) => {
-    toast({
-      title: `Rate "${currentSong?.title}" ${newRating} stars?`,
-      description: "Confirm your rating to continue",
-      action: (
-        <div className="flex gap-2 mt-2">
-          <button
-            onClick={() => {
-              handleRatingConfirm(newRating);
-              toast({
-                title: "Rating Saved!",
-                description: `You gave "${currentSong?.title}" ${newRating} stars`,
-              });
-            }}
-            className="px-4 py-2 rounded-xl bg-purple-500 text-white hover:bg-purple-600"
-          >
-            Confirm
-          </button>
-          <button
-            onClick={() => setRating(0)}
-            className="px-4 py-2 rounded-xl bg-gray-500 text-white hover:bg-gray-600"
-          >
-            Cancel
-          </button>
-        </div>
-      ),
-      duration: 5000,
-    });
     setRating(newRating);
   };
   
@@ -408,14 +393,7 @@ const Index = () => {
                             
                             {/* Confirm Button - Always visible with disabled state */}
                             <button
-                              onClick={() => {
-                                handleRatingConfirm(rating);
-                                toast({
-                                  title: "Rating Saved!",
-                                  description: `You gave "${currentSong?.title}" ${rating} stars`,
-                                  duration: 2000,
-                                });
-                              }}
+                              onClick={() => handleRatingConfirm(rating)}
                               disabled={rating === 0}
                               className={`px-8 py-2 rounded-full font-medium transition-colors ${
                                 rating > 0 

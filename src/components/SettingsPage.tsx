@@ -1,5 +1,8 @@
 import React from "react";
-import { X } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Checkbox } from "@/components/ui/checkbox";
+import NavBar from "./NavBar";
 
 interface SettingsPageProps {
   isOpen: boolean;
@@ -8,94 +11,55 @@ interface SettingsPageProps {
   onGenreToggle: (genre: string) => void;
 }
 
-const availableGenres = [
-  "Electronic",
-  "Rock",
-  "Pop",
-  "Hip Hop",
-  "R&B",
-  "Jazz",
-  "Classical",
-  "Alternative",
-  "Indie",
-  "Metal",
-  "Folk",
-  "Blues"
+const allGenres = [
+  "Pop", "Rock", "Electronic", "Hip Hop", "R&B", "Indie", "Jazz", "Classical",
+  "Country", "Folk", "Metal", "Punk", "Blues", "Reggae", "Soul", "Funk"
 ];
 
-const SettingsPage = ({ 
-  isOpen, 
-  onClose, 
-  selectedGenres, 
-  onGenreToggle 
+const SettingsPage = ({
+  isOpen,
+  onClose,
+  selectedGenres,
+  onGenreToggle,
 }: SettingsPageProps) => {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 bg-purple-950 z-50 animate-in slide-in-from-right">
-      <div className="min-h-full flex flex-col">
-        <header className="px-6 py-4 bg-black/20 backdrop-blur-lg">
-          <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-white">Settings</h2>
-            <button 
-              onClick={onClose}
-              className="p-2 rounded-full bg-white/10 hover:bg-white/20"
-            >
-              <X className="w-5 h-5 text-white" />
-            </button>
-          </div>
-        </header>
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent className="max-w-md h-[calc(100vh-2rem)] flex flex-col bg-gradient-to-b from-purple-900 to-purple-950">
+        <div className="flex-1 overflow-hidden">
+          <header className="mb-6">
+            <h2 className="text-2xl font-bold text-white text-center">Settings</h2>
+            <p className="text-center text-white/60">Customize your music preferences</p>
+          </header>
 
-        <div className="flex-1 px-6 py-8">
-          <div className="mb-8">
-            <h3 className="text-xl font-semibold text-white mb-4">Favorite Genres</h3>
-            <p className="text-white/70 text-sm mb-4">
-              Select the genres you're interested in. You'll see more songs from these genres.
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {availableGenres.map((genre) => (
-                <button
-                  key={genre}
-                  onClick={() => onGenreToggle(genre)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                    selectedGenres.includes(genre)
-                      ? 'bg-purple-500 text-white'
-                      : 'bg-white/10 text-white/70 hover:bg-white/20'
-                  }`}
-                >
-                  {genre}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="mb-8">
-            <h3 className="text-xl font-semibold text-white mb-4">App Preferences</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between bg-white/5 p-4 rounded-xl">
-                <span className="text-white">Auto-play songs</span>
-                <button className="w-12 h-6 bg-purple-500 rounded-full relative">
-                  <span className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full" />
-                </button>
-              </div>
-              <div className="flex items-center justify-between bg-white/5 p-4 rounded-xl">
-                <span className="text-white">Show explicit content</span>
-                <button className="w-12 h-6 bg-white/20 rounded-full relative">
-                  <span className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full" />
-                </button>
+          <ScrollArea className="h-[calc(100%-8rem)]">
+            <div className="px-4">
+              <div className="bg-white/10 rounded-lg p-4">
+                <h3 className="text-lg font-medium text-white mb-4">Music Genres</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {allGenres.map((genre) => (
+                    <div key={genre} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={genre}
+                        checked={selectedGenres.includes(genre)}
+                        onCheckedChange={() => onGenreToggle(genre)}
+                        className="data-[state=checked]:bg-music-primary data-[state=checked]:border-music-primary"
+                      />
+                      <label
+                        htmlFor={genre}
+                        className="text-sm text-white cursor-pointer"
+                      >
+                        {genre}
+                      </label>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
-
-          <div className="mb-8">
-            <h3 className="text-xl font-semibold text-white mb-4">Account</h3>
-            <button className="w-full py-3 bg-white/10 text-white rounded-xl hover:bg-white/20">
-              Sign Out
-            </button>
-          </div>
+          </ScrollArea>
         </div>
-      </div>
-    </div>
+        <NavBar />
+      </DialogContent>
+    </Dialog>
   );
 };
 

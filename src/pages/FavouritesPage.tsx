@@ -11,6 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { usePlayback } from "@/contexts/PlaybackContext";
+import StarRating from "@/components/StarRating";
 
 interface GenreGroup {
   genre: string;
@@ -37,22 +38,28 @@ const FavouritesPage = () => {
   const [sortBy, setSortBy] = useState<'recent' | 'title' | 'artist'>('recent');
   const [activeTab, setActiveTab] = useState<'favorites' | 'five-stars'>('favorites');
   const { playSong } = usePlayback();
+  const [allSongs, setAllSongs] = useState<Song[]>([]);
 
   // Load songs from localStorage
   useEffect(() => {
     const savedFavorites = localStorage.getItem("favoriteSongs");
-    const savedRatedSongs = localStorage.getItem("ratedSongs");
-    const allSongs = localStorage.getItem("allSongs"); // You'll need to store all songs in localStorage
+    const savedAllSongs = localStorage.getItem("allSongs");
+    const savedFiveStarSongs = localStorage.getItem("fiveStarSongs");
 
     if (savedFavorites) {
       setFavoriteSongs(JSON.parse(savedFavorites));
     }
     
-    if (savedRatedSongs && allSongs) {
-      const ratedSongIds = JSON.parse(savedRatedSongs);
-      const songs = JSON.parse(allSongs);
-      const fiveStarSongs = songs.filter((song: Song) => song.rating === 5);
+    if (savedAllSongs) {
+      const allSongs = JSON.parse(savedAllSongs);
+      setAllSongs(allSongs);
+      
+      // Filter songs with rating 5
+      const fiveStarSongs = allSongs.filter((song: Song) => song.rating === 5);
       setFiveStarSongs(fiveStarSongs);
+    } else if (savedFiveStarSongs) {
+      // Fallback to the dedicated five star songs storage
+      setFiveStarSongs(JSON.parse(savedFiveStarSongs));
     }
   }, []);
 
@@ -250,6 +257,11 @@ const FavouritesPage = () => {
                                       <div className={`flex-grow ${viewMode === 'grid' ? 'text-center mt-2' : 'text-left'}`}>
                                         <h4 className="font-medium text-white line-clamp-1">{song.title}</h4>
                                         <p className="text-sm text-white/60 line-clamp-1">{song.artist}</p>
+                                        {song.rating > 0 && (
+                                          <div className="mt-1">
+                                            <StarRating rating={song.rating} readonly size="sm" />
+                                          </div>
+                                        )}
                                       </div>
                                     </div>
                                   </button>
