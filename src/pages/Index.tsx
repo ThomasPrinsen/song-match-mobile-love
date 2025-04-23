@@ -234,6 +234,13 @@ const Index = () => {
     });
   }, [api, filteredSongs, isPlaying, playSong, pauseSong]);
 
+  // Add useEffect for autoplay
+  useEffect(() => {
+    if (filteredSongs.length > 0) {
+      playSong(filteredSongs[0]);
+    }
+  }, []); // Empty dependency array means this runs once on mount
+
   const visibleSongs = filteredSongs.slice(0, 5);
   const isFavorite = favoriteSongs.some(song => song.id === currentSong?.id);
   
@@ -331,10 +338,8 @@ const Index = () => {
                     >
                       <div className="p-2">
                         <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 shadow-xl">
-                          {/* Song Card Content with clickable cover */}
-                          <div className="relative aspect-square rounded-2xl overflow-hidden mb-6 cursor-pointer"
-                            onClick={handlePlayPause}
-                          >
+                          {/* Song Card Content - remove clickable cover */}
+                          <div className="relative aspect-square rounded-2xl overflow-hidden mb-6">
                             <img 
                               src={song.coverImage}
                               alt={song.title}
@@ -342,15 +347,6 @@ const Index = () => {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
                             
-                            {/* Play/Pause Overlay */}
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 hover:opacity-100 transition-opacity">
-                              {isPlaying && globalCurrentSong?.id === song.id ? (
-                                <Pause className="w-16 h-16 text-white" />
-                              ) : (
-                                <Play className="w-16 h-16 text-white" />
-                              )}
-                            </div>
-
                             <div className="absolute bottom-0 left-0 right-0 p-6">
                               <h2 className="text-3xl font-bold text-white mb-2">{song.title}</h2>
                               <p className="text-white/90 text-xl">{song.artist}</p>
