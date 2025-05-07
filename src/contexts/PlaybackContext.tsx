@@ -9,6 +9,7 @@ interface PlaybackContextType {
   resumeSong: () => void;
   nextSong: () => void;
   previousSong: () => void;
+  resetPlayback: () => void;
 }
 
 const PlaybackContext = createContext<PlaybackContextType | undefined>(undefined);
@@ -42,6 +43,11 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
     console.log('Previous song');
   };
 
+  const resetPlayback = () => {
+    setCurrentSong(null);
+    setIsPlaying(false);
+  };
+
   return (
     <PlaybackContext.Provider
       value={{
@@ -52,6 +58,7 @@ export function PlaybackProvider({ children }: { children: ReactNode }) {
         resumeSong,
         nextSong,
         previousSong,
+        resetPlayback,
       }}
     >
       {children}

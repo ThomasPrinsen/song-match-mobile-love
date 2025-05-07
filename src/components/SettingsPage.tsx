@@ -17,26 +17,26 @@ const allGenres = [
   "Country", "Folk", "Metal", "Punk", "Blues", "Reggae", "Soul", "Funk"
 ];
 
-const getGenreColor = (genre: string): string => {
+const getGenreColor = (genre: string, selected: boolean): string => {
   const colors: { [key: string]: string } = {
-    'Electronic': 'bg-blue-500/20 hover:bg-blue-500/30 border-blue-500/50',
-    'Alternative': 'bg-purple-500/20 hover:bg-purple-500/30 border-purple-500/50',
-    'Rock': 'bg-red-500/20 hover:bg-red-500/30 border-red-500/50',
-    'Pop': 'bg-pink-500/20 hover:bg-pink-500/30 border-pink-500/50',
-    'Hip Hop': 'bg-yellow-500/20 hover:bg-yellow-500/30 border-yellow-500/50',
-    'R&B': 'bg-green-500/20 hover:bg-green-500/30 border-green-500/50',
-    'Jazz': 'bg-orange-500/20 hover:bg-orange-500/30 border-orange-500/50',
-    'Classical': 'bg-indigo-500/20 hover:bg-indigo-500/30 border-indigo-500/50',
-    'Country': 'bg-amber-500/20 hover:bg-amber-500/30 border-amber-500/50',
-    'Folk': 'bg-lime-500/20 hover:bg-lime-500/30 border-lime-500/50',
-    'Metal': 'bg-slate-500/20 hover:bg-slate-500/30 border-slate-500/50',
-    'Punk': 'bg-rose-500/20 hover:bg-rose-500/30 border-rose-500/50',
-    'Blues': 'bg-cyan-500/20 hover:bg-cyan-500/30 border-cyan-500/50',
-    'Reggae': 'bg-emerald-500/20 hover:bg-emerald-500/30 border-emerald-500/50',
-    'Soul': 'bg-violet-500/20 hover:bg-violet-500/30 border-violet-500/50',
-    'Funk': 'bg-fuchsia-500/20 hover:bg-fuchsia-500/30 border-fuchsia-500/50',
+    'Electronic': selected ? 'bg-blue-500/50' : 'bg-white/10',
+    'Alternative': selected ? 'bg-purple-500/50' : 'bg-white/10',
+    'Rock': selected ? 'bg-red-500/50' : 'bg-white/10',
+    'Pop': selected ? 'bg-pink-500/50' : 'bg-white/10',
+    'Hip Hop': selected ? 'bg-yellow-500/50' : 'bg-white/10',
+    'R&B': selected ? 'bg-green-500/50' : 'bg-white/10',
+    'Jazz': selected ? 'bg-orange-500/50' : 'bg-white/10',
+    'Classical': selected ? 'bg-indigo-500/50' : 'bg-white/10',
+    'Country': selected ? 'bg-amber-500/50' : 'bg-white/10',
+    'Folk': selected ? 'bg-lime-500/50' : 'bg-white/10',
+    'Metal': selected ? 'bg-slate-500/50' : 'bg-white/10',
+    'Punk': selected ? 'bg-rose-500/50' : 'bg-white/10',
+    'Blues': selected ? 'bg-cyan-500/50' : 'bg-white/10',
+    'Reggae': selected ? 'bg-emerald-500/50' : 'bg-white/10',
+    'Soul': selected ? 'bg-violet-500/50' : 'bg-white/10',
+    'Funk': selected ? 'bg-fuchsia-500/50' : 'bg-white/10',
   };
-  return colors[genre] || 'bg-gray-500/20 hover:bg-gray-500/30 border-gray-500/50';
+  return colors[genre] || (selected ? 'bg-gray-500/50' : 'bg-white/10');
 };
 
 const SettingsPage = ({
@@ -81,31 +81,20 @@ const SettingsPage = ({
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4">
-                    {allGenres.map((genre) => (
-                      <div
-                        key={genre}
-                        className={`relative flex items-center rounded-lg border transition-all duration-200 ${
-                          selectedGenres.includes(genre)
-                            ? getGenreColor(genre)
-                            : 'border-white/10 hover:bg-white/10'
-                        }`}
-                      >
+                    {allGenres.map((genre) => {
+                      const selected = selectedGenres.includes(genre);
+                      return (
                         <button
+                          key={genre}
+                          type="button"
                           onClick={() => onGenreToggle(genre)}
-                          className="w-full p-4 flex items-center gap-3"
-                          aria-label={`Toggle ${genre} genre`}
+                          className={`w-full px-4 py-2 rounded-full text-white text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/40 ${getGenreColor(genre, selected)} ${selected ? '' : 'opacity-60 hover:opacity-100'}`}
+                          aria-pressed={selected}
                         >
-                          <Checkbox
-                            id={genre}
-                            checked={selectedGenres.includes(genre)}
-                            className="h-4 w-4 shrink-0 rounded-sm border border-white/20 border-primary ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-purple-500 data-[state=checked]:text-primary-foreground"
-                          />
-                          <span className="text-sm font-medium text-white">
-                            {genre}
-                          </span>
+                          {genre}
                         </button>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               </div>

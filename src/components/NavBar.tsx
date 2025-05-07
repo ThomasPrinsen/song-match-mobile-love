@@ -1,12 +1,12 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Music, Heart, User } from "lucide-react";
+import { Music, BarChart2, User } from "lucide-react";
 
 const NavBar: React.FC = () => {
   const location = useLocation();
   
   const isActive = (path: string) => {
-    return location.pathname === path;
+    return location.pathname === path || (path === '/favourites' && location.pathname.startsWith('/charts'));
   };
   
   return (
@@ -26,7 +26,7 @@ const NavBar: React.FC = () => {
             isActive('/favourites') ? 'text-purple-400' : 'text-white'
           }`}
         >
-          <Heart className="w-6 h-6" />
+          <BarChart2 className="w-6 h-6" />
         </Link>
         <Link 
           to="/profile" 

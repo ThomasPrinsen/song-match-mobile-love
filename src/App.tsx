@@ -10,6 +10,7 @@ import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 import { PlaybackProvider } from '@/contexts/PlaybackContext';
 import GlobalPlaybackBar from '@/components/GlobalPlaybackBar';
+import GenreTop10Page from "./pages/GenreTop10Page";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/discover" element={<Index />} />
             <Route path="/favourites" element={<FavouritesPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/charts/:genre" element={<GenreTop10Page />} />
             <Route path="/" element={<Navigate to="/login" replace />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
