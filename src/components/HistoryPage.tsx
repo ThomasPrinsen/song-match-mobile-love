@@ -5,7 +5,6 @@ import { Music, Clock, Calendar, X } from "lucide-react";
 import { Song } from "@/data/songs";
 import StarRating from "./StarRating";
 import { usePlayback } from "@/contexts/PlaybackContext";
-import NavBar from "./NavBar";
 
 interface HistoryPageProps {
   isOpen: boolean;
@@ -35,7 +34,7 @@ const HistoryPage = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md h-screen p-0 flex flex-col bg-gradient-to-b from-gray-900 via-purple-950 to-gray-950">
+      <DialogContent className="w-full max-w-sm h-full max-h-[90vh] p-0 flex flex-col bg-gradient-to-b from-gray-900 via-purple-950 to-gray-950 border-none shadow-2xl rounded-3xl">
         {/* Close Button */}
         <DialogClose className="absolute right-4 top-4 rounded-full p-2 bg-white/20 hover:bg-white/40 transition-all">
           <X className="h-5 w-5 text-white" />
@@ -56,7 +55,7 @@ const HistoryPage = ({
             </header>
           </div>
 
-          <ScrollArea className="h-[calc(100vh-16rem)]">
+          <ScrollArea className="h-full max-h-[calc(90vh-12rem)]">
             <div className="px-4 pb-24 space-y-2">
               {ratedSongsList.length === 0 ? (
                 <div className="flex flex-col items-center justify-center text-center py-16 bg-white/5 rounded-2xl mt-8">
@@ -122,7 +121,6 @@ const HistoryPage = ({
             </div>
           </ScrollArea>
         </div>
-        <NavBar />
       </DialogContent>
     </Dialog>
   );

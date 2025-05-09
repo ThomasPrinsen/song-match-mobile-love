@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Settings2, Music2, X } from "lucide-react";
-import NavBar from "./NavBar";
 
 interface SettingsPageProps {
   isOpen: boolean;
@@ -47,7 +46,7 @@ const SettingsPage = ({
 }: SettingsPageProps) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md h-screen p-0 flex flex-col bg-gradient-to-b from-gray-900 via-purple-950 to-gray-950">
+      <DialogContent className="w-full max-w-sm h-full max-h-[90vh] p-0 flex flex-col bg-gradient-to-b from-gray-900 via-purple-950 to-gray-950 border-none shadow-2xl rounded-3xl">
         <DialogClose className="absolute right-4 top-4 rounded-full p-2 bg-white/20 hover:bg-white/40 transition-all">
           <X className="h-5 w-5 text-white" />
         </DialogClose>
@@ -66,7 +65,7 @@ const SettingsPage = ({
             </header>
           </div>
 
-          <ScrollArea className="h-[calc(100vh-16rem)]">
+          <ScrollArea className="h-full max-h-[calc(90vh-12rem)]">
             <div className="px-4 pb-24">
               <div className="space-y-6">
                 <div className="bg-white/5 rounded-2xl p-6">
@@ -100,7 +99,6 @@ const SettingsPage = ({
             </div>
           </ScrollArea>
         </div>
-        <NavBar />
       </DialogContent>
     </Dialog>
   );
