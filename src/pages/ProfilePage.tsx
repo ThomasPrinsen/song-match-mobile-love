@@ -56,9 +56,9 @@ const ProfilePage = () => {
 
   return (
     <MobileLayout>
-      <div className="min-h-full flex flex-col bg-gradient-to-b from-purple-900 to-purple-950">
-        <ScrollArea className="h-full">
-          <div className="h-full flex flex-col px-4 pt-10 pb-32">
+      <div className="min-h-full flex flex-col bg-gradient-to-b from-gray-900 via-purple-950 to-gray-950 w-full max-w-md mx-auto overflow-x-hidden">
+        <ScrollArea className="h-full w-full">
+          <div className="h-full flex flex-col px-4 pt-10 pb-32 w-full">
             <header className="mb-6">
               <div className="flex items-center justify-center mb-4 relative" style={{ overflow: 'visible' }}>
                 <div className="h-24 w-24 rounded-full bg-white/10 flex items-center justify-center group cursor-pointer relative" onClick={handleAvatarClick} id="avatar-container" style={{ overflow: 'visible' }}>
@@ -79,11 +79,11 @@ const ProfilePage = () => {
                   />
                 </div>
               </div>
-              <h1 className="text-2xl font-bold text-white text-center">Your Profile</h1>
+              <h1 className="text-2xl font-extrabold text-white text-center drop-shadow-lg">Your Profile</h1>
             </header>
 
             <div className="space-y-4">
-              <div className="bg-white/10 rounded-lg p-4">
+              <div className="bg-white/5 rounded-2xl p-4">
                 <h2 className="text-lg font-medium text-white mb-2">Account Settings</h2>
                 <div className="space-y-3">
                   <button className="w-full flex items-center gap-3 text-white/80 hover:text-white">
@@ -97,14 +97,14 @@ const ProfilePage = () => {
                 </div>
               </div>
 
-              <div className="bg-white/10 rounded-lg p-4">
+              <div className="bg-white/5 rounded-2xl p-4">
                 <h2 className="text-lg font-medium text-white mb-2">Statistics</h2>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-white/5 rounded-lg p-3">
+                  <div className="bg-white/10 rounded-lg p-3">
                     <div className="text-2xl font-bold text-white">42</div>
                     <div className="text-sm text-white/60">Favorite Songs</div>
                   </div>
-                  <div className="bg-white/5 rounded-lg p-3">
+                  <div className="bg-white/10 rounded-lg p-3">
                     <div className="text-2xl font-bold text-white">15</div>
                     <div className="text-sm text-white/60">5-Star Ratings</div>
                   </div>
@@ -112,7 +112,7 @@ const ProfilePage = () => {
               </div>
 
               {/* Liked Songs Section */}
-              <div className="bg-white/10 rounded-lg p-4 mt-6">
+              <div className="bg-white/5 rounded-2xl p-4 mt-6">
                 <div className="flex items-center gap-2 mb-3">
                   <Heart className="w-5 h-5 text-pink-500" />
                   <h2 className="text-lg font-semibold text-white">Liked Songs</h2>
@@ -122,7 +122,7 @@ const ProfilePage = () => {
                 ) : (
                   <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
                     {likedSongs.map((song) => (
-                      <div key={song.id} className="flex items-center gap-3 bg-white/5 rounded-xl p-2">
+                      <div key={song.id} className="flex items-center gap-3 bg-white/10 rounded-xl p-2">
                         <img src={song.coverImage} alt={song.title} className="w-12 h-12 rounded-lg object-cover" />
                         <div className="flex-1 min-w-0">
                           <div className="font-medium text-white truncate">{song.title}</div>

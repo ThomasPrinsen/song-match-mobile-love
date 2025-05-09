@@ -63,15 +63,15 @@ const LoginPage = () => {
 
   return (
     <MobileLayout>
-      <div className="min-h-full flex flex-col bg-gradient-to-b from-purple-900 to-purple-950">
+      <div className="min-h-full flex flex-col bg-gradient-to-b from-gray-900 via-purple-950 to-gray-950">
         <div className="flex-grow flex flex-col justify-center items-center px-4 pt-10 pb-32">
           <div className="w-full max-w-md">
-            <div className="bg-white/10 backdrop-blur-md rounded-3xl p-8 shadow-xl">
+            <div className="bg-white/5 rounded-3xl p-8">
               <div className="flex flex-col items-center mb-8">
-                <div className="h-16 w-16 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center mb-4">
+                <div className="h-16 w-16 rounded-full bg-white/10 flex items-center justify-center mb-4">
                   <h1 className="text-3xl font-bold text-white">T</h1>
                 </div>
-                <h1 className="text-2xl font-bold text-white text-center mb-1">Thammy</h1>
+                <h1 className="text-2xl font-extrabold text-white text-center mb-1 drop-shadow-lg">Thammy</h1>
                 <p className="text-center text-white/60 text-sm">Where music breaks through</p>
               </div>
               <form onSubmit={handleSubmit} className="space-y-6">

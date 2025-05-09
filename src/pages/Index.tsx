@@ -284,11 +284,11 @@ const Index = () => {
 
   return (
     <MobileLayout>
-      <div className="min-h-full flex flex-col bg-gradient-to-b from-purple-900 to-purple-950">
+      <div className="min-h-full flex flex-col bg-gradient-to-b from-gray-900 via-purple-950 to-gray-950">
         {/* Top Navigation Bar */}
         <header className="px-6 py-4 bg-black/20 backdrop-blur-lg rounded-b-3xl">
           <div className="flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-white">
+            <h1 className="text-2xl font-extrabold text-white drop-shadow-lg">
               Thammy
             </h1>
             <div className="flex gap-2">
@@ -312,9 +312,9 @@ const Index = () => {
         <div className="flex-grow flex flex-col justify-center items-center px-4 pt-2 pb-32">
           {filteredSongs.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center">
-              <Music size={64} className="text-gray-300 mb-4" />
-              <h3 className="text-xl font-medium text-white mb-2">No more songs</h3>
-              <p className="text-white max-w-xs">
+              <Music size={64} className="text-gray-400 mb-4" />
+              <h3 className="text-xl font-medium text-white/80 mb-2">No more songs</h3>
+              <p className="text-white/50 max-w-xs">
                 You've rated all available songs in this genre. Try selecting different genres in your profile.
               </p>
             </div>
@@ -337,8 +337,8 @@ const Index = () => {
                       className="pl-2 basis-[95%]"
                     >
                       <div className="p-2">
-                        <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 shadow-xl">
-                          {/* Song Card Content - remove clickable cover */}
+                        <div className="bg-white/5 hover:bg-white/10 transition-colors rounded-3xl p-6">
+                          {/* Song Card Content */}
                           <div className="relative aspect-square rounded-2xl overflow-hidden mb-6">
                             <img 
                               src={song.coverImage}
@@ -346,22 +346,17 @@ const Index = () => {
                               className="w-full h-full object-cover"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-                            
                             <div className="absolute bottom-0 left-0 right-0 p-6">
                               <h2 className="text-3xl font-bold text-white mb-2">{song.title}</h2>
                               <p className="text-white/90 text-xl">{song.artist}</p>
                             </div>
                           </div>
-
                           {/* Tags - with colors based on genre */}
                           <div className="flex flex-wrap gap-2 mb-6">
-                            <span className={`px-4 py-2 rounded-full text-white text-sm font-medium ${
-                              getGenreColor(song.genre)
-                            }`}>
+                            <span className="px-4 py-2 rounded-full text-white text-sm font-medium bg-purple-600/80">
                               {song.genre}
                             </span>
                           </div>
-
                           {/* Star Rating - smaller and more compact */}
                           <div className="flex flex-col items-center gap-4">
                             <div className="flex justify-center gap-4">
@@ -386,7 +381,6 @@ const Index = () => {
                                 </button>
                               ))}
                             </div>
-                            
                             {/* Confirm Button - Always visible with disabled state */}
                             <button
                               onClick={() => handleRatingConfirm(rating)}
@@ -423,7 +417,6 @@ const Index = () => {
             </div>
           )}
         </div>
-
         {/* NavBar */}
         <NavBar />
       </div>

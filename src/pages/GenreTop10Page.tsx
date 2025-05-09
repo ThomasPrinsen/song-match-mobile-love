@@ -77,9 +77,9 @@ const GenreTop10Page = () => {
 
   return (
     <MobileLayout>
-      <div className="min-h-full flex flex-col bg-gradient-to-b from-purple-900 to-purple-950">
+      <div className="min-h-full flex flex-col bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950">
         {/* Sticky header */}
-        <div className="sticky top-0 z-20 bg-gradient-to-b from-purple-900/95 to-purple-900/60 px-4 pt-8 pb-4 -mx-4 flex flex-col gap-2 shadow-md">
+        <div className="sticky top-0 z-20 px-4 pt-8 pb-4 -mx-4 flex flex-col gap-2 bg-gradient-to-b from-gray-900/95 via-gray-900/80 to-gray-900/80 rounded-b-3xl">
           <button
             className="flex items-center gap-2 text-white w-fit hover:bg-white/10 rounded-full px-3 py-1 transition"
             onClick={() => navigate(-1)}
@@ -88,11 +88,11 @@ const GenreTop10Page = () => {
             <span className="font-medium">Back</span>
           </button>
           <div className="flex flex-col items-center justify-center mt-2">
-            <div className="h-14 w-14 rounded-full bg-white/10 flex items-center justify-center mb-2">
-              <Music size={28} className="text-white" />
+            <div className="h-14 w-14 rounded-full bg-purple-600/20 flex items-center justify-center mb-2">
+              <Music size={28} className="text-purple-300" />
             </div>
-            <h1 className="text-2xl font-bold text-white text-center mb-1">Top {genreName} Songs</h1>
-            <p className="text-center text-white/80 text-sm">Highest rated this month</p>
+            <h1 className="text-2xl font-bold text-white text-center mb-1 drop-shadow-lg">Top {genreName} Songs</h1>
+            <p className="text-center text-white/70 text-sm">Highest rated this month</p>
           </div>
         </div>
         <div className="flex-1 flex flex-col px-4 pb-32 pt-4 overflow-y-auto">
@@ -101,16 +101,16 @@ const GenreTop10Page = () => {
               const isCurrent = currentSong && currentSong.id === song.id;
               const isLiked = liked.includes(song.id);
               return (
-                <Card key={song.title} className={`flex items-center gap-4 bg-white/10 border-none p-3 rounded-2xl shadow-md ${isCurrent ? 'ring-2 ring-purple-400' : ''}`}>
+                <div key={song.title} className={`flex items-center gap-4 bg-white/5 hover:bg-white/10 transition-colors border border-white/10 p-3 rounded-2xl ${isCurrent ? 'ring-2 ring-purple-400' : ''}`}>
                   <div className="relative group">
                     <img
                       src={song.coverImage}
                       alt={song.title}
-                      className="w-16 h-16 rounded-xl object-cover border-2 border-white/10 shadow cursor-pointer"
+                      className="w-16 h-16 rounded-xl object-cover border-2 border-white/10 shadow-sm cursor-pointer"
                       onClick={() => handlePlayPause(song)}
                     />
                     <button
-                      className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"
+                      className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl"
                       onClick={() => handlePlayPause(song)}
                       tabIndex={-1}
                     >
@@ -120,7 +120,7 @@ const GenreTop10Page = () => {
                         <Play className="w-8 h-8 text-white" />
                       )}
                     </button>
-                    <span className="absolute -top-2 -left-2 bg-purple-700 text-white text-xs font-bold rounded-full px-2 py-0.5 shadow">#{idx + 1}</span>
+                    <span className="absolute -top-2 -left-2 bg-purple-600 text-white text-xs font-bold rounded-full px-2 py-0.5 shadow">#{idx + 1}</span>
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="font-semibold text-white truncate text-base">{song.title}</div>
@@ -128,12 +128,12 @@ const GenreTop10Page = () => {
                     {renderStars(song.rating)}
                   </div>
                   <button
-                    className="ml-2 w-10 h-10 flex items-center justify-center rounded-full bg-black/20 hover:bg-pink-500/80 transition-colors"
+                    className="ml-2 w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-purple-500/80 transition-colors"
                     onClick={() => handleLike(song)}
                   >
-                    <Heart className={`w-6 h-6 ${isLiked ? 'fill-pink-500 text-pink-500' : 'text-white/60'}`} />
+                    <Heart className={`w-6 h-6 ${isLiked ? 'fill-purple-500 text-purple-500' : 'text-white/60'}`} />
                   </button>
-                </Card>
+                </div>
               );
             })}
           </div>
