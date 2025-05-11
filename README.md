@@ -1,73 +1,80 @@
-# Welcome to your Lovable project
+# Song Match Mobile
 
-## Project info
+## Over het Project
 
-**URL**: https://lovable.dev/projects/a0e83b7e-2c46-417e-b11c-a5fcc19119be
+Thammy is een moderne webapplicatie waarmee gebruikers nieuwe muziek kunnen ontdekken of hun muziek kunnen uploaden als beginnend artiest. De applicatie maakt gebruik van geavanceerde technologieën om een naadloze en intuïtieve gebruikerservaring te bieden.
 
-## How can I edit this code?
+## Functionaliteiten
 
-There are several ways of editing your application.
+- Muziekvoorkeuren opslaan en ontdekken
+- Ontdekken van de beste nieuwe muziek per genre
+- Moderne en responsieve gebruikersinterface
+- Real-time updates en interacties
 
-**Use Lovable**
+## Technische Stack
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a0e83b7e-2c46-417e-b11c-a5fcc19119be) and start prompting.
+Dit project is gebouwd met de volgende technologieën:
 
-Changes made via Lovable will be committed automatically to this repo.
+- **Vite**: Snelle en moderne build tool
+- **TypeScript**: Voor type-veilige code
+- **React**: Voor de gebruikersinterface
+- **shadcn-ui**: Voor moderne UI componenten
+- **Tailwind CSS**: Voor styling
+- **React Router**: Voor navigatie
+- **React Query**: Voor data fetching en state management
 
-**Use your preferred IDE**
+## Installatie
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+Volg deze stappen om het project lokaal op te zetten:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+# Stap 1: Clone de repository
+git clone <REPOSITORY_URL>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+# Stap 2: Navigeer naar de project directory
+cd song-match-mobile
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Stap 3: Installeer de benodigde dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Stap 4: Start de development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Ontwikkeling
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Het project gebruikt verschillende scripts voor ontwikkeling:
 
-**Use GitHub Codespaces**
+- `npm run dev`: Start de development server
+- `npm run build`: Bouwt de applicatie voor productie
+- `npm run lint`: Controleert de code op fouten
+- `npm run preview`: Toont een preview van de productie build
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Deployment
 
-## What technologies are used for this project?
+De applicatie kan eenvoudig worden gedeployed via Vercel:
 
-This project is built with:
+1. Maak een account aan op Vercel
+2. Verbind je GitHub repository
+3. Selecteer het Vite framework preset
+4. Deploy!
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Bijdragen
 
-## How can I deploy this project?
+Bijdragen aan het project zijn welkom! Volg deze stappen:
 
-Simply open [Lovable](https://lovable.dev/projects/a0e83b7e-2c46-417e-b11c-a5fcc19119be) and click on Share -> Publish.
+1. Fork de repository
+2. Maak een nieuwe feature branch
+3. Commit je wijzigingen
+4. Push naar de branch
+5. Open een Pull Request
 
-## Can I connect a custom domain to my Lovable project?
+## Licentie
 
-Yes it is!
+Dit project is gelicenseerd onder de MIT License - zie het LICENSE bestand voor details.
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## Contact
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Voor vragen of suggesties, neem contact op via:
+- Email: [thomas05.prinsen@gmail.com]
+- GitHub Issues: [repository issues]
